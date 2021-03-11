@@ -31,7 +31,7 @@
 - [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
-
+<!-- 
 ## 🧐 About <a name = "about"></a>
 
 Write about 1-2 paragraphs describing the purpose of your project.
@@ -92,7 +92,7 @@ Add notes about how to use the system.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-Add additional notes about how to deploy this on a live system.
+Add additional notes about how to deploy this on a live system. -->
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
@@ -105,10 +105,10 @@ Add additional notes about how to deploy this on a live system.
 
 - [@Nauman3S](https://github.com/Nauman3S) -  Initial work
 
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+<!-- See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
 - Hat tip to anyone whose code was used
 - Inspiration
-- References
+- References -->
