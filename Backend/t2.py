@@ -416,6 +416,7 @@ while 1:
                 sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
                 # client.publish("SmartTControl/data/v",tStr)#temp values
                 client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
+                
                 cursor=cursor+1
 
             else:

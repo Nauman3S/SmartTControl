@@ -17,6 +17,7 @@ WebServer server;
 #include <PubSubClient.h>
 #include "Controller.h"
 #include "SoftwareStack.h"
+#include "settings.h"
 #ifndef BUILTIN_LED
 #define BUILTIN_LED  2  // backward compatibility
 #endif
@@ -45,9 +46,15 @@ PubSubClient mqttClient(wclient);
 
 String dev1="";
 String dev2="";
+String IMEIsList[10];
+
 void MQTTSubscriptions(){
-  mqttClient.subscribe("SmartTControl/data/v");
-  mqttClient.subscribe("SmartTControl/user/login");
+  //mqttClient.subscribe("SmartTControl/data/v");
+  for(int i=0;i<10;i++){
+    IMEIsList[i]==String("NA");
+  }
+  String topicN=String("SmartTControl/data/devices/")+emailAddress;
+  mqttClient.subscribe(topicN.c_str());
   
 }
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -66,19 +73,41 @@ void callback(char* topic, byte* payload, unsigned int length) {
     loggedIn=pLoad;
   }
 
-  else if(String(topic)==String("SmartTControl/data/v")){
+  else if(String(topic)==String("SmartTControl/data/devices/")+emailAddress){
     
-    if(loggedIn==String("yes")){
-      //if user is logged into cmost.ca
+    
+      int nD=getNumberOfDevices(pLoad);
+      Serial.print("Number of Devices::");
+      Serial.println(nD);
+      if(nD==1){
       Serial.print("Data :::");
       Serial.println(String(pLoad));
-      dev1=ss.StringSeparator(pLoad,';',0);
-      dev2=ss.StringSeparator(pLoad,';',1);
+      dev1=ss.StringSeparator(pLoad,';',1);//1 is temp 0 is imei
+      IMEIsList[0]=ss.StringSeparator(pLoad,';',0);//1 is temp 0 is imei
+      dev2=String("0");
       Serial.println(dev1);
-      Serial.println(dev2);
+      }
+      if(nD>1){
+        String IMEIs=ss.StringSeparator(pLoad,';',0);
+        String Temps=ss.StringSeparator(pLoad,';',1);
+
+        dev1=ss.StringSeparator(Temps,',',0);
+        dev2=ss.StringSeparator(Temps,',',1);
+        Serial.println(dev1);
+        Serial.println(dev2);
+
+        IMEIsList[0]=ss.StringSeparator(IMEIs,',',0);
+        IMEIsList[1]=ss.StringSeparator(IMEIs,',',1);
+
+      }
+      
+      // dev1=ss.StringSeparator(pLoad,';',0);
+      // dev2=ss.StringSeparator(pLoad,';',1);
+      // Serial.println(dev1);
+      // Serial.println(dev2);
       changeRelayState(compareValues(dev1.toFloat(),getTempValue()));
 
-    }
+    // }
   }
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1') {
@@ -192,14 +221,26 @@ void cmotsValues(){
     page += String(F("</body></html>"));
 
     page += String(F("<h3>Live data from Cmots.ca</h3><br><br>"));
+    page += String(F("<h2>Account: "));
+    page += String((emailAddress));
+    page += String(F("</h2><br><br>"));
 
-    page += String(F("<h4>Sensor 1: "));
+    page += String(F("<h4>Sensor 1</h4><br>  "));
+    page += String(F("<h5>IMEI: "));
+    page += String((IMEIsList[0]));
+    page += String(F("</h5><br>"));
+    page += String(F("<h5>Temperature: "));
     page += String((dev1));
-    page += String(F("</h4><br><br>"));
+    page += String(F("</h5><br><br>"));
 
-    page += String(F("<h4>Sensor 2: "));
+
+    page += String(F("<h4>Sensor 2</h4><br>  "));
+    page += String(F("<h5>IMEI: "));
+    page += String((IMEIsList[1]));
+    page += String(F("</h5><br>"));
+    page += String(F("<h5>Temperature: "));
     page += String((dev2));
-    page += String(F("</h4><br><br>"));
+    page += String(F("</h5><br><br>"));
     page += String(F("<p><br><a class=\"button\" href=\"/cmots\">Refresh</a></p>"));
 
   
@@ -264,6 +305,7 @@ void sendRedirect(String uri) {
 
 void handleGPIO() {
   String em=String(server.arg("email"));
+  emailAddress=em;
   String pas=String(server.arg("pass"));
   String freq=String(server.arg("freq"));
   Serial.println(em);
@@ -272,8 +314,10 @@ void handleGPIO() {
   dataV+=String(";");
   dataV+=String(pas);
   mqttPublish("SmartTControl/creds/data",dataV);
-  mqttPublish("SmartTControl/device/freq",freq);
-  mqttPublish("SmartTControl/device/run","3");//to run
+  //mqttPublish("SmartTControl/device/freq",freq);
+  //mqttPublish("SmartTControl/device/run","3");//to run
+  //reconnect();//for new email address subscription
+  MQTTSubscriptions();
   if (server.arg("v") == "low"){
     digitalWrite(BUILTIN_LED, LOW);
     mqttPublish("SmartTControl/device/run","0");//to off
