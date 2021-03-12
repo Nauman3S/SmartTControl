@@ -15,6 +15,7 @@ import re, os
 
 import sqlite3
 
+MASTER_KILL_SWITCH=0
 
 msgV=""
 topicV=""
@@ -69,7 +70,7 @@ def on_connect(client, userdata, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global dataFreq
-    global msgV,topicV, runStatus,passwordV,userNameV
+    global msgV,topicV, runStatus,passwordV,userNameVm,MASTER_KILL_SWITCH
     print(msg.topic+" "+str(msg.payload))
     topicV=str(msg.topic)
     msgV=str((msg.payload).decode('utf-8'))
@@ -84,6 +85,11 @@ def on_message(client, userdata, msg):
         userNameV=k[0]
         passwordV=k[1]
         sqlNewSignup(userNameV,passwordV,"0","Wait;Wait")
+    if("SmartTControl/settings/masterkillswitch" in topicV):
+        if("1" in msgV):
+            MASTER_KILL_SWITCH=1
+        else:
+            MASTER_KILL_SWITCH=0
 
 
 
@@ -100,6 +106,7 @@ client.connect("broker.hivemq.com", 1883, 60)
 client.subscribe("SmartTControl/creds/data")
 client.subscribe("SmartTControl/device/freq")
 client.subscribe("SmartTControl/device/run")
+client.subscribe("SmartTControl/settings/masterkillswitch")
 
 #client.loop_start()
 
@@ -198,7 +205,7 @@ def loginToCmots(userNameG,passwordG):
         d1=[] #List to store name of the product
         d2=[] #List to store price of the product
 
-        time.sleep(5.5)
+        time.sleep(4)
 
 
         temp1=''
@@ -264,7 +271,7 @@ def populateData():
         print('Products ',ProductsList)
 
         m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
-        time.sleep(4.5)
+        time.sleep(3)
         content = driver.page_source
         soup = BeautifulSoup(content)
         g=soup.find_all("div", id=lambda value: value and value.endswith("_Temperature"))
@@ -384,39 +391,40 @@ def getEmailsListFromDB():
 emPassList=[]
 cursor=0
 while 1:
-    try:
-        sqlFirstRun()
-        printAllSQL()
-        # print(getLiveData(userNameV))
-        emPassList=getEmailsListFromDB()
-        print(emPassList)
-        # deleteSQLEntry('gsaae')
-        
-        # exit(0)
-        print('list',emPassList[2])
-        print('cursor pos ',cursor)
-        if(cursor>=emPassList[2]):
-            cursor=0
-        if(cursor<emPassList[2]):
-            print('Logging In')
-            loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
-            print('Logged IN')
-        
-        if(populateData()):
-            print('Populating Data')
-            LoginSuccess=1
-            sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
-            # client.publish("SmartTControl/data/v",tStr)#temp values
-            client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
-            cursor=cursor+1
+    if(MASTER_KILL_SWITCH==0):
+        try:
+            sqlFirstRun()
+            printAllSQL()
+            # print(getLiveData(userNameV))
+            emPassList=getEmailsListFromDB()
+            print(emPassList)
+            # deleteSQLEntry('gsaae')
+            
+            # exit(0)
+            print('list',emPassList[2])
+            print('cursor pos ',cursor)
+            if(cursor>=emPassList[2]):
+                cursor=0
+            if(cursor<emPassList[2]):
+                print('Logging In')
+                loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
+                print('Logged IN')
+            
+            if(populateData()):
+                print('Populating Data')
+                LoginSuccess=1
+                sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
+                # client.publish("SmartTControl/data/v",tStr)#temp values
+                client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
+                cursor=cursor+1
 
-        else:
-            print('Login error; check your username or password')
-            cursor=cursor+1
-        print('exiting current session')
-        exitSession()
-    except Exception as e:
-        print(e)
+            else:
+                print('Login error; check your username or password')
+                cursor=cursor+1
+            print('exiting current session')
+            exitSession()
+        except Exception as e:
+            print(e)
 
     # chrome_options = Options()  
     # chrome_options.add_argument("--headless") 
