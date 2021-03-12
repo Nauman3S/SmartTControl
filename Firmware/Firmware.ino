@@ -44,17 +44,30 @@ String incomingTopic="";
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
 
-String dev1="";
-String dev2="";
+String devList[10];
 String IMEIsList[10];
-
+String LastUpdated="";
+void MQTTUnSubscribe(){
+    String topicN=String("SmartTControl/data/devices/")+OLDemailAddress;
+    String topicU=String("SmartTControl/lastUpdated/devices/")+OLDemailAddress;
+    for(int i=0;i<10;i++){
+       IMEIsList[i]=String("NA");
+       devList[i]=String("0");
+    }
+    mqttClient.unsubscribe(topicN.c_str());
+    mqttClient.unsubscribe(topicU.c_str());
+    
+}
 void MQTTSubscriptions(){
   //mqttClient.subscribe("SmartTControl/data/v");
-  for(int i=0;i<10;i++){
-    IMEIsList[i]==String("NA");
-  }
+  
+  // for(int i=0;i<10;i++){
+  //   IMEIsList[i]==String("NA");
+  // }
   String topicN=String("SmartTControl/data/devices/")+emailAddress;
+  String topicU=String("SmartTControl/lastUpdated/devices/")+emailAddress;
   mqttClient.subscribe(topicN.c_str());
+  mqttClient.subscribe(topicU.c_str());
   
 }
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -76,39 +89,48 @@ void callback(char* topic, byte* payload, unsigned int length) {
   else if(String(topic)==String("SmartTControl/data/devices/")+emailAddress){
     
     
-      int nD=getNumberOfDevices(pLoad);
+      nD=getNumberOfDevices(pLoad);
       Serial.print("Number of Devices::");
       Serial.println(nD);
       if(nD==1){
       Serial.print("Data :::");
       Serial.println(String(pLoad));
-      dev1=ss.StringSeparator(pLoad,';',1);//1 is temp 0 is imei
+      devList[0]=ss.StringSeparator(pLoad,';',1);//1 is temp 0 is imei
       IMEIsList[0]=ss.StringSeparator(pLoad,';',0);//1 is temp 0 is imei
-      dev2=String("0");
-      Serial.println(dev1);
+      Serial.println(devList[0]);
       }
       if(nD>1){
-        String IMEIs=ss.StringSeparator(pLoad,';',0);
-        String Temps=ss.StringSeparator(pLoad,';',1);
+        for (int i=0;i<nD;i++){
+            String IMEIs=ss.StringSeparator(pLoad,';',0);
+            String Temps=ss.StringSeparator(pLoad,';',1);
 
-        dev1=ss.StringSeparator(Temps,',',0);
-        dev2=ss.StringSeparator(Temps,',',1);
-        Serial.println(dev1);
-        Serial.println(dev2);
+            devList[i]=ss.StringSeparator(Temps,',',i);
 
-        IMEIsList[0]=ss.StringSeparator(IMEIs,',',0);
-        IMEIsList[1]=ss.StringSeparator(IMEIs,',',1);
+            Serial.println(devList[i]);
+        
 
+            IMEIsList[i]=ss.StringSeparator(IMEIs,',',i);
+            Serial.println(IMEIsList[i]);
+        //IMEIsList[1]=ss.StringSeparator(IMEIs,',',1);
+
+        }
+        
       }
+
+
       
       // dev1=ss.StringSeparator(pLoad,';',0);
       // dev2=ss.StringSeparator(pLoad,';',1);
       // Serial.println(dev1);
       // Serial.println(dev2);
-      changeRelayState(compareValues(dev1.toFloat(),getTempValue()));
+      changeRelayState(compareValues(devList[0].toFloat(),getTempValue()));
 
     // }
   }
+
+      else if(String(topic)==String("SmartTControl/lastUpdated/devices/")+emailAddress){
+          LastUpdated=pLoad;
+      }
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1') {
     digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
@@ -225,22 +247,31 @@ void cmotsValues(){
     page += String((emailAddress));
     page += String(F("</h2><br><br>"));
 
-    page += String(F("<h4>Sensor 1</h4><br>  "));
+    page += String(F("<h6>Data From Server Received At: "));
+    page += String((LastUpdated));
+    page += String(F("</h6><br><br>"));
+
+    for (int j=0;j<nD;j++){
+
+    page += String(F("<h4>Sensor "));
+    page += String((j));
+    page += String("</h4><br>  ");
     page += String(F("<h5>IMEI: "));
-    page += String((IMEIsList[0]));
+    page += String((IMEIsList[j]));
     page += String(F("</h5><br>"));
     page += String(F("<h5>Temperature: "));
-    page += String((dev1));
+    page += String((devList[j]));
     page += String(F("</h5><br><br>"));
+    
+    }
 
-
-    page += String(F("<h4>Sensor 2</h4><br>  "));
-    page += String(F("<h5>IMEI: "));
-    page += String((IMEIsList[1]));
-    page += String(F("</h5><br>"));
-    page += String(F("<h5>Temperature: "));
-    page += String((dev2));
-    page += String(F("</h5><br><br>"));
+    // page += String(F("<h4>Sensor 2</h4><br>  "));
+    // page += String(F("<h5>IMEI: "));
+    // page += String((IMEIsList[1]));
+    // page += String(F("</h5><br>"));
+    // page += String(F("<h5>Temperature: "));
+    // page += String((dev2));
+    // page += String(F("</h5><br><br>"));
     page += String(F("<p><br><a class=\"button\" href=\"/cmots\">Refresh</a></p>"));
 
   
@@ -304,6 +335,7 @@ void sendRedirect(String uri) {
 }
 
 void handleGPIO() {
+  OLDemailAddress=emailAddress;
   String em=String(server.arg("email"));
   emailAddress=em;
   String pas=String(server.arg("pass"));
@@ -317,6 +349,8 @@ void handleGPIO() {
   //mqttPublish("SmartTControl/device/freq",freq);
   //mqttPublish("SmartTControl/device/run","3");//to run
   //reconnect();//for new email address subscription
+  MQTTUnSubscribe();
+  delay(0.5);
   MQTTSubscriptions();
   if (server.arg("v") == "low"){
     digitalWrite(BUILTIN_LED, LOW);

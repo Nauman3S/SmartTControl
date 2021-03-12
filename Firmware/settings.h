@@ -1,5 +1,6 @@
 String emailAddress="";
-
+String OLDemailAddress="";
+int nD=0;
 int getNumberOfDevices(String dataV){
     int commaCounter=0;
     char comma=',';

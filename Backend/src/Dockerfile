@@ -38,4 +38,4 @@ WORKDIR /usr/src/app
 COPY ./requirements.txt /usr/src/app/
 RUN /usr/bin/pip3 install --no-cache-dir -r requirements.txt
 COPY ./ /usr/src/app
-CMD ["python3","-u", "t2.py"]
+CMD ["python3", "t2.py"]

@@ -9,6 +9,7 @@ import phantomjs
 import pandas as pd
 import random
 import time
+from datetime import datetime
 import paho.mqtt.client as mqtt
 #import json
 import re, os
@@ -191,7 +192,7 @@ def loginToCmots(userNameG,passwordG):
         driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
         #print('chrome driver loaded')
 
-        p#rint('\n\n\nPlease wait while the platform is loading....\n\n\n')
+        #print('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
         m=driver.get("https://www.cmots.ca/basic/product.aspx")
         username = driver.find_element_by_id("Username")
@@ -416,6 +417,7 @@ while 1:
                 sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
                 # client.publish("SmartTControl/data/v",tStr)#temp values
                 client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
+                client.publish("SmartTControl/lastUpdated/devices/"+emPassList[0][cursor],str(datetime.now()))
                 
                 cursor=cursor+1
 
