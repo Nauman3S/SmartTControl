@@ -103,19 +103,19 @@ client.subscribe("SmartTControl/device/run")
 
 #client.loop_start()
 
-while 1:
-    ####for tests
-    topicV='SmartTControl/creds/data'
-    msgV='naumanshakir3s@gmail.com;cmots@A123'
-    #msgV='umerazam256@gmail.com;447376'
-    ###########
-    if("SmartTControl/creds/data" in topicV):
-        print(msgV)
-        k=msgV.split(';')
-        userNameV=k[0]
-        passwordV=k[1]
-        break
-    client.loop()
+# while 1:
+#     ####for tests
+#     topicV='SmartTControl/creds/data'
+#     msgV='naumanshakir3s@gmail.com;cmots@A123'
+#     #msgV='umerazam256@gmail.com;447376'
+#     ###########
+#     if("SmartTControl/creds/data" in topicV):
+#         print(msgV)
+#         k=msgV.split(';')
+#         userNameV=k[0]
+#         passwordV=k[1]
+#         break
+#     client.loop()
 
 creds=msgV.split(';')
 print(creds)
@@ -175,8 +175,8 @@ def loginToCmots(userNameG,passwordG):
         chrome_options = Options()  
         chrome_options.add_argument("--headless") 
 
-        driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
-        #driver = webdriver.Chrome("/usr/bin/chromedriver", chrome_options=chrome_options)
+        #driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
+        driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
 
         print('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
