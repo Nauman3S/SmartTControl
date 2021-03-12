@@ -173,10 +173,16 @@ def loginToCmots(userNameG,passwordG):
     global driver
     try:
         chrome_options = Options()  
-        chrome_options.add_argument("--headless") 
+        #chrome_options.add_argument("--headless") 
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--screen-size=1200x800")
+        print('chrome options added')
 
         #driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
         driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
+        print('chrome driver loaded')
 
         print('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
@@ -187,19 +193,19 @@ def loginToCmots(userNameG,passwordG):
         # password.send_keys("cmots@A123")
         username.send_keys(userNameG)
         password.send_keys(passwordG)
-        driver.find_element_by_id("btnLogin").click()
-
+        driver.find_element_by_id("btnLogin").send_keys(Keys.RETURN)
 
         d1=[] #List to store name of the product
         d2=[] #List to store price of the product
 
-        time.sleep(4)
+        time.sleep(5.5)
 
 
         temp1=''
         temp2=''
         return 1
-    except:
+    except Exception as e:
+        print(e)
         return 0
 def populateData():
     global driver,numberOfDevices,IDsList,IMEIsList,ProductsList,tList
@@ -258,7 +264,7 @@ def populateData():
         print('Products ',ProductsList)
 
         m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
-        time.sleep(3)
+        time.sleep(4.5)
         content = driver.page_source
         soup = BeautifulSoup(content)
         g=soup.find_all("div", id=lambda value: value and value.endswith("_Temperature"))
@@ -378,34 +384,40 @@ def getEmailsListFromDB():
 emPassList=[]
 cursor=0
 while 1:
-    sqlFirstRun()
-    printAllSQL()
-    # print(getLiveData(userNameV))
-    emPassList=getEmailsListFromDB()
-    print(emPassList)
-    # deleteSQLEntry('gsaae')
-    
-    # exit(0)
-    print('list',emPassList[2])
-    print('cursor pos ',cursor)
-    if(cursor>=emPassList[2]):
-        cursor=0
-    if(cursor<emPassList[2]):
-        loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
-    
-    if(populateData()):
-        LoginSuccess=1
-        sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
-        # client.publish("SmartTControl/data/v",tStr)#temp values
-        client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
-        cursor=cursor+1
+    try:
+        sqlFirstRun()
+        printAllSQL()
+        # print(getLiveData(userNameV))
+        emPassList=getEmailsListFromDB()
+        print(emPassList)
+        # deleteSQLEntry('gsaae')
+        
+        # exit(0)
+        print('list',emPassList[2])
+        print('cursor pos ',cursor)
+        if(cursor>=emPassList[2]):
+            cursor=0
+        if(cursor<emPassList[2]):
+            print('Logging In')
+            loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
+            print('Logged IN')
+        
+        if(populateData()):
+            print('Populating Data')
+            LoginSuccess=1
+            sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
+            # client.publish("SmartTControl/data/v",tStr)#temp values
+            client.publish("SmartTControl/data/devices/"+emPassList[0][cursor],formatedScrappedData())#devices list
+            cursor=cursor+1
 
-    else:
-        print('Login error; check your username or password')
-        cursor=cursor+1
+        else:
+            print('Login error; check your username or password')
+            cursor=cursor+1
+        print('exiting current session')
+        exitSession()
+    except Exception as e:
+        print(e)
 
-    exitSession()
-    
     # chrome_options = Options()  
     # chrome_options.add_argument("--headless") 
 
