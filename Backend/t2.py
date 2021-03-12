@@ -193,7 +193,7 @@ def loginToCmots(userNameG,passwordG):
         d1=[] #List to store name of the product
         d2=[] #List to store price of the product
 
-        time.sleep(5)
+        time.sleep(4)
 
 
         temp1=''
