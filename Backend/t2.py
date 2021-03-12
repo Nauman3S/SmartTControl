@@ -125,7 +125,7 @@ client.subscribe("SmartTControl/settings/masterkillswitch")
 #     client.loop()
 
 creds=msgV.split(';')
-print(creds)
+#print(creds)
 client.loop_start()
 
 # chrome_options = Options()  
@@ -185,13 +185,13 @@ def loginToCmots(userNameG,passwordG):
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--screen-size=1200x800")
-        print('chrome options added')
+        #print('chrome options added')
 
         #driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
         driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
-        print('chrome driver loaded')
+        #print('chrome driver loaded')
 
-        print('\n\n\nPlease wait while the platform is loading....\n\n\n')
+        p#rint('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
         m=driver.get("https://www.cmots.ca/basic/product.aspx")
         username = driver.find_element_by_id("Username")
@@ -232,7 +232,7 @@ def populateData():
         
         for m in re.finditer('"ID":', mg):
 
-            print('ID found', m.start(), m.end())
+            #print('ID found', m.start(), m.end())
             indexList.append(m.end())
         numberOfDevices=len(indexList)
         
@@ -242,7 +242,7 @@ def populateData():
         indexList.clear()
         for m in re.finditer('"IMEI":"', mg):
 
-            print('IMEI found', m.start(), m.end())
+            #print('IMEI found', m.start(), m.end())
             indexList.append(m.end())
 
         for i in range(0,len(indexList)):
@@ -252,11 +252,11 @@ def populateData():
 
         for m in re.finditer('"ProductName":"', mg):
 
-            print('IMEI found', m.start(), m.end())
+            #print('IMEI found', m.start(), m.end())
             indexList.append(m.end())
         for m in re.finditer('TypeID', mg):
 
-            print('TypeID found', m.start(), m.end())
+            #print('TypeID found', m.start(), m.end())
             indexList2.append(m.start())
 
         for i in range(0,len(indexList)):
@@ -286,7 +286,7 @@ def populateData():
                 tList[i]=k[:-1]
             except:
                 print('err2')
-                client.loop_stop()
+                #client.loop_stop()
 
         
         tStr=""
@@ -297,7 +297,7 @@ def populateData():
             tStr=tStr+tList[j]+';'
         tStr=tStr[:-1]
         
-        print('Temperatures List ',tList)
+        #print('Temperatures List ',tList)
         return 1
     except:
         return 0
@@ -394,24 +394,24 @@ while 1:
     if(MASTER_KILL_SWITCH==0):
         try:
             sqlFirstRun()
-            printAllSQL()
+            #printAllSQL()
             # print(getLiveData(userNameV))
             emPassList=getEmailsListFromDB()
-            print(emPassList)
+            #print(emPassList)
             # deleteSQLEntry('gsaae')
             
             # exit(0)
-            print('list',emPassList[2])
-            print('cursor pos ',cursor)
+            # print('list',emPassList[2])
+            # print('cursor pos ',cursor)
             if(cursor>=emPassList[2]):
                 cursor=0
             if(cursor<emPassList[2]):
-                print('Logging In')
+                #print('Logging In')
                 loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
-                print('Logged IN')
+                #print('Logged IN')
             
             if(populateData()):
-                print('Populating Data')
+                #print('Populating Data')
                 LoginSuccess=1
                 sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
                 # client.publish("SmartTControl/data/v",tStr)#temp values
