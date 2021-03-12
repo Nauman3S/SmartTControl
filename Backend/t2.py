@@ -182,7 +182,7 @@ def loginToCmots(userNameG,passwordG):
     try:
         chrome_options = Options()  
         #chrome_options.add_argument("--headless") 
-        chrome_options.add_argument("--no-sandbox")
+        #chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--screen-size=1200x800")
@@ -312,6 +312,7 @@ def exitSession():
     IDsList.clear()
     numberOfDevices=0
     try:
+        driver.close()
         driver.quit()
     except:
         nothing=0
