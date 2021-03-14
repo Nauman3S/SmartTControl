@@ -181,15 +181,15 @@ def loginToCmots(userNameG,passwordG):
     global driver
     try:
         chrome_options = Options()  
-        #chrome_options.add_argument("--headless") 
-        #chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--screen-size=1200x800")
+                #chrome_options.add_argument("--headless") 
+                #chrome_options.add_argument("--no-sandbox")
+        # chrome_options.add_argument("--disable-dev-shm-usage")
+        # chrome_options.add_argument("--disable-gpu")
+        # chrome_options.add_argument("--screen-size=1200x800")
         #print('chrome options added')
 
-        #driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
-        driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
+        driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
+        #driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
         #print('chrome driver loaded')
 
         #print('\n\n\nPlease wait while the platform is loading....\n\n\n')

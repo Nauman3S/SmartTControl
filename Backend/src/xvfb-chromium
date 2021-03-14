@@ -9,7 +9,8 @@ _kill_procs() {
 # Setup a trap to catch SIGTERM and relay it to child processes
 trap _kill_procs SIGTERM
 
-XVFB_WHD=${XVFB_WHD:-1280x720x16}
+#XVFB_WHD=${XVFB_WHD:-1280x720x16}
+XVFB_WHD=${XVFB_WHD:-1280x800x16}
 
 # Start Xvfb
 Xvfb :99 -ac -screen 0 $XVFB_WHD -nolisten tcp &
@@ -17,7 +18,7 @@ xvfb=$!
 
 export DISPLAY=:99
 
-chromium --no-sandbox $@ &
+chromium --no-sandbox --disable-dev-shm-usage --disable-gpu --incognito --disable-application-cache --disable-extensions --disable-default-apps $@ &
 chromium=$!
 
 wait $chromium
