@@ -47,6 +47,7 @@ PubSubClient mqttClient(wclient);
 String devList[10];
 String IMEIsList[10];
 String LastUpdated="";
+String internetStatus="";
 void MQTTUnSubscribe(){
     String topicN=String("SmartTControl/data/devices/")+OLDemailAddress;
     String topicU=String("SmartTControl/lastUpdated/devices/")+OLDemailAddress;
@@ -179,6 +180,7 @@ bool mqttConnect() {
     mqttClient.setServer(mqtt_server, 1883);
     mqttClient.setCallback(callback);
     Serial.println(String("Attempting MQTT broker:") + String(mqtt_server));
+    internetStatus="Connecting...";
 
     for (uint8_t i = 0; i < 8; i++) {
       clientId[i] = alphanum[random(62)];
@@ -187,12 +189,14 @@ bool mqttConnect() {
 
     if (mqttClient.connect(clientId, mqtt_user, mqtt_pass)) {
       Serial.println("Established:" + String(clientId));
+      internetStatus="Connected";
       //mqttClient.subscribe("SmartTControl/data/v");
       MQTTSubscriptions();
       return true;
     }
     else {
       Serial.println("Connection failed:" + String(mqttClient.state()));
+      internetStatus="Not-Connected. Retrying...";
       if (!--retry)
         break;
       delay(3000);
@@ -246,6 +250,10 @@ void cmotsValues(){
     page += String(F("<h2>Account: "));
     page += String((emailAddress));
     page += String(F("</h2><br><br>"));
+
+    page += String(F("<h4>InternetStatus: "));
+    page += String((internetStatus));
+    page += String(F("</h4><br><br>"));
 
     page += String(F("<h6>Data From Server Received At: "));
     page += String((LastUpdated));
