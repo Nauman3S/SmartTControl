@@ -28,19 +28,19 @@ runStatus="1"
 def sqlSaveData(em,pas,dno,data):
     conn = sqlite3.connect('cmotsDB.db')
     cursor = conn.execute("SELECT EMAIL from CMOTS WHERE EMAIL="+'\''+em+'\'')
-    # print(cursor)
+    # #print(cursor)
     dataLen=0
     for row in cursor:
-        # print('row',row)
+        # #print('row',row)
         dataLen=len(row)
-        # print('len',len(row))
-    print('datalen ',dataLen)
+        # #print('len',len(row))
+    #print('datalen ',dataLen)
     if(dataLen==0):
         conn.execute("INSERT INTO CMOTS (EMAIL,PASS,DEVICES_NO,DATA) VALUES ("+'\''+em+'\','+'\''+pas+'\','+'\''+dno+'\','+'\''+data+'\''+")")
         conn.commit()
-        # print('Added record')
+        # #print('Added record')
     else:
-        # print('updating record')
+        # #print('updating record')
         conn.execute("UPDATE CMOTS set EMAIL = "+'\''+em+'\''+" ,PASS="+'\''+pas+'\''+ " ,DEVICES_NO="+'\''+dno+'\''+" ,DATA="+'\''+data+'\''+" where EMAIL = "+'\''+em+'\'')
         conn.commit()
     conn.close()
@@ -48,22 +48,22 @@ def sqlSaveData(em,pas,dno,data):
 def sqlNewSignup(em,pas,dno,data):
     conn = sqlite3.connect('cmotsDB.db')
     cursor = conn.execute("SELECT EMAIL from CMOTS WHERE EMAIL="+'\''+em+'\'')
-    # print(cursor)
+    # #print(cursor)
     dataLen=0
     for row in cursor:
-        # print('row',row)
+        # #print('row',row)
         dataLen=len(row)
-        # print('len',len(row))
-    print('datalen ',dataLen)
+        # #print('len',len(row))
+    #print('datalen ',dataLen)
     if(dataLen==0):
         conn.execute("INSERT INTO CMOTS (EMAIL,PASS,DEVICES_NO,DATA) VALUES ("+'\''+em+'\','+'\''+pas+'\','+'\''+dno+'\','+'\''+data+'\''+")")
         conn.commit()
-        # print('Added record')
+        # #print('Added record')
     
     conn.close()
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, rc):
-    print("Connected with result code "+str(rc))
+    #print("Connected with result code "+str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("SmartTControl/device/data")
@@ -72,7 +72,7 @@ def on_connect(client, userdata, rc):
 def on_message(client, userdata, msg):
     global dataFreq
     global msgV,topicV, runStatus,passwordV,userNameVm,MASTER_KILL_SWITCH
-    print(msg.topic+" "+str(msg.payload))
+    #print(msg.topic+" "+str(msg.payload))
     topicV=str(msg.topic)
     msgV=str((msg.payload).decode('utf-8'))
 
@@ -81,7 +81,7 @@ def on_message(client, userdata, msg):
     if(topicV=='SmartTControl/device/run'):
         runStatus=msgV
     if("SmartTControl/creds/data" in topicV):
-        print(msgV)
+        #print(msgV)
         k=msgV.split(';')
         userNameV=k[0]
         passwordV=k[1]
@@ -118,7 +118,7 @@ client.subscribe("SmartTControl/settings/masterkillswitch")
 #     #msgV='umerazam256@gmail.com;447376'
 #     ###########
 #     if("SmartTControl/creds/data" in topicV):
-#         print(msgV)
+#         #print(msgV)
 #         k=msgV.split(';')
 #         userNameV=k[0]
 #         passwordV=k[1]
@@ -126,7 +126,7 @@ client.subscribe("SmartTControl/settings/masterkillswitch")
 #     client.loop()
 
 creds=msgV.split(';')
-#print(creds)
+##print(creds)
 client.loop_start()
 
 # chrome_options = Options()  
@@ -135,7 +135,7 @@ client.loop_start()
 # #driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
 # driver = webdriver.Chrome("/usr/bin/chromedriver", chrome_options=chrome_options)
 
-# print('\n\n\nPlease wait while the platform is loading....\n\n\n')
+# #print('\n\n\nPlease wait while the platform is loading....\n\n\n')
 # #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
 # m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
 # username = driver.find_element_by_id("Username")
@@ -186,13 +186,13 @@ def loginToCmots(userNameG,passwordG):
         # chrome_options.add_argument("--disable-dev-shm-usage")
         # chrome_options.add_argument("--disable-gpu")
         # chrome_options.add_argument("--screen-size=1200x800")
-        #print('chrome options added')
+        ##print('chrome options added')
 
         driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
         #driver = webdriver.Chrome("/usr/bin/chromedriver", options=chrome_options)
-        #print('chrome driver loaded')
+        ##print('chrome driver loaded')
 
-        #print('\n\n\nPlease wait while the platform is loading....\n\n\n')
+        ##print('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
         m=driver.get("https://www.cmots.ca/basic/product.aspx")
         username = driver.find_element_by_id("Username")
@@ -233,7 +233,7 @@ def populateData():
         
         for m in re.finditer('"ID":', mg):
 
-            #print('ID found', m.start(), m.end())
+            ##print('ID found', m.start(), m.end())
             indexList.append(m.end())
         numberOfDevices=len(indexList)
         
@@ -243,7 +243,7 @@ def populateData():
         indexList.clear()
         for m in re.finditer('"IMEI":"', mg):
 
-            #print('IMEI found', m.start(), m.end())
+            ##print('IMEI found', m.start(), m.end())
             indexList.append(m.end())
 
         for i in range(0,len(indexList)):
@@ -253,11 +253,11 @@ def populateData():
 
         for m in re.finditer('"ProductName":"', mg):
 
-            #print('IMEI found', m.start(), m.end())
+            ##print('IMEI found', m.start(), m.end())
             indexList.append(m.end())
         for m in re.finditer('TypeID', mg):
 
-            #print('TypeID found', m.start(), m.end())
+            ##print('TypeID found', m.start(), m.end())
             indexList2.append(m.start())
 
         for i in range(0,len(indexList)):
@@ -266,10 +266,10 @@ def populateData():
         indexList.clear()
         indexList2.clear()
 
-        print('No of Devices: ',numberOfDevices)
-        print('IDs ',IDsList)
-        print('IMEIs ',IMEIsList)
-        print('Products ',ProductsList)
+        #print('No of Devices: ',numberOfDevices)
+        #print('IDs ',IDsList)
+        #print('IMEIs ',IMEIsList)
+        #print('Products ',ProductsList)
 
         m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
         time.sleep(3)
@@ -298,7 +298,7 @@ def populateData():
             tStr=tStr+tList[j]+';'
         tStr=tStr[:-1]
         
-        #print('Temperatures List ',tList)
+        ##print('Temperatures List ',tList)
         return 1
     except:
         return 0
@@ -327,7 +327,7 @@ def sqlFirstRun():
          DEVICES_NO      TEXT     NOT NULL,
          DATA            TEXT       NOT NULL);''')
 
-        print( "database created successfully")
+        #print( "database created successfully")
         conn.close()
 
 def getLiveData(em):
@@ -336,11 +336,11 @@ def getLiveData(em):
     dataLen=0
     data=''
     for row in cursor:
-        print('row',row)
+        #print('row',row)
         data=row
         dataLen=len(row)
-        # print('len',len(row))
-    # print('data',data)
+        # #print('len',len(row))
+    # #print('data',data)
     conn.close()
     return list(data)
 def printAllSQL():
@@ -373,20 +373,20 @@ def getEmailsListFromDB():
     emList=[]
     pasList=[]
     for row in cursor:
-        # print('row',row)
+        # #print('row',row)
         data=row
         dataLen=len(row)
         
         emList.append(list(data)[0])
     cursor = conn.execute("SELECT PASS from CMOTS")
     for row in cursor:
-        # print('row',row)
+        # #print('row',row)
         data=row
         dataLen=len(row)
         
         pasList.append(list(data)[0])
-    # print(emList)
-    # print(pasList)
+    # #print(emList)
+    # #print(pasList)
     conn.close()
     g=[emList,pasList,len(emList)]
     return g
@@ -396,24 +396,24 @@ while 1:
     if(MASTER_KILL_SWITCH==0):
         try:
             sqlFirstRun()
-            #printAllSQL()
-            # print(getLiveData(userNameV))
+            ##printAllSQL()
+            # #print(getLiveData(userNameV))
             emPassList=getEmailsListFromDB()
-            #print(emPassList)
+            ##print(emPassList)
             # deleteSQLEntry('gsaae')
             
             # exit(0)
-            # print('list',emPassList[2])
-            # print('cursor pos ',cursor)
+            # #print('list',emPassList[2])
+            # #print('cursor pos ',cursor)
             if(cursor>=emPassList[2]):
                 cursor=0
             if(cursor<emPassList[2]):
-                #print('Logging In')
+                ##print('Logging In')
                 loginToCmots(emPassList[0][cursor],emPassList[1][cursor])
-                #print('Logged IN')
+                ##print('Logged IN')
             
             if(populateData()):
-                #print('Populating Data')
+                ##print('Populating Data')
                 LoginSuccess=1
                 sqlSaveData(emPassList[0][cursor],emPassList[1][cursor],str(numberOfDevices),formatedScrappedData())
                 # client.publish("SmartTControl/data/v",tStr)#temp values
@@ -423,9 +423,9 @@ while 1:
                 cursor=cursor+1
 
             else:
-                print('Login error; check your username or password')
+                #print('Login error; check your username or password')
                 cursor=cursor+1
-            print('exiting current session')
+            #print('exiting current session')
             exitSession()
         except Exception as e:
             print(e)
@@ -436,7 +436,7 @@ while 1:
     # driver = webdriver.Chrome("/usr/bin/chromedriver") #chrome_options=chrome_options)
     # #driver = webdriver.Chrome("/usr/bin/chromedriver", chrome_options=chrome_options)
 
-    # print('\n\n\nPlease wait while the platform is loading....\n\n\n')
+    # #print('\n\n\nPlease wait while the platform is loading....\n\n\n')
     # #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
     # m=driver.get("https://www.cmots.ca/basic/product.aspx")
     # username = driver.find_element_by_id("Username")
@@ -474,7 +474,7 @@ while 1:
         
     #     for m in re.finditer('"ID":', mg):
 
-    #         print('ID found', m.start(), m.end())
+    #         #print('ID found', m.start(), m.end())
     #         indexList.append(m.end())
     #     numberOfDevices=len(indexList)
         
@@ -484,7 +484,7 @@ while 1:
     #     indexList.clear()
     #     for m in re.finditer('"IMEI":"', mg):
 
-    #         print('IMEI found', m.start(), m.end())
+    #         #print('IMEI found', m.start(), m.end())
     #         indexList.append(m.end())
 
     #     for i in range(0,len(indexList)):
@@ -494,11 +494,11 @@ while 1:
 
     #     for m in re.finditer('"ProductName":"', mg):
 
-    #         print('IMEI found', m.start(), m.end())
+    #         #print('IMEI found', m.start(), m.end())
     #         indexList.append(m.end())
     #     for m in re.finditer('TypeID', mg):
 
-    #         print('TypeID found', m.start(), m.end())
+    #         #print('TypeID found', m.start(), m.end())
     #         indexList2.append(m.start())
 
     #     for i in range(0,len(indexList)):
@@ -507,10 +507,10 @@ while 1:
     #     indexList.clear()
     #     indexList2.clear()
 
-    #     print('No of Devices: ',numberOfDevices)
-    #     print('IDs ',IDsList)
-    #     print('IMEIs ',IMEIsList)
-    #     print('Products ',ProductsList)
+    #     #print('No of Devices: ',numberOfDevices)
+    #     #print('IDs ',IDsList)
+    #     #print('IMEIs ',IMEIsList)
+    #     #print('Products ',ProductsList)
 
     #     m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
     #     time.sleep(3)
@@ -527,7 +527,7 @@ while 1:
     #             tList.append(k)
     #             tList[i]=k[:-1]
     #         except:
-    #             print('err2')
+    #             #print('err2')
     #             client.loop_stop()
     
         
@@ -539,7 +539,7 @@ while 1:
     #         tStr=tStr+tList[j]+';'
     #     tStr=tStr[:-1]
         
-    #     print('Temperatures List ',tList)
+    #     #print('Temperatures List ',tList)
         
         
      

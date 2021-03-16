@@ -47,7 +47,7 @@ PubSubClient mqttClient(wclient);
 String devList[10];
 String IMEIsList[10];
 String LastUpdated="";
-String internetStatus="";
+String internetStatus="Not-Connected";
 void MQTTUnSubscribe(){
     String topicN=String("SmartTControl/data/devices/")+OLDemailAddress;
     String topicU=String("SmartTControl/lastUpdated/devices/")+OLDemailAddress;
