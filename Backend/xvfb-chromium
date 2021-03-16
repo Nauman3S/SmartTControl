@@ -18,7 +18,7 @@ xvfb=$!
 
 export DISPLAY=:99
 
-chromium --no-sandbox --headless --disable-dev-shm-usage --disable-gpu --incognito --disable-application-cache --disable-extensions --disable-default-apps $@ &
+chromium --no-sandbox --remote-debugging-port=9222 --disable-dev-shm-usage --disable-infobars --disable-gpu --incognito --disable-application-cache --disable-extensions --disable-default-apps $@ &
 chromium=$!
 
 wait $chromium

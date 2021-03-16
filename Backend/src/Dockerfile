@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -yq \
 RUN apt-get install -y curl xvfb chromium wget python3 python3-pip mlocate
 RUN apt install -y libcairo2-dev pkg-config python3-dev
 #RUN locate pip3
+RUN chromium --version
 RUN dpkg -L python3-pip
 
 # chromeDriver v2.35

@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options  
 from bs4 import BeautifulSoup
 import phantomjs
@@ -12,7 +13,7 @@ import time
 from datetime import datetime
 import paho.mqtt.client as mqtt
 #import json
-import re, os
+import re, os, gc
 
 import sqlite3
 
@@ -195,8 +196,16 @@ def loginToCmots(userNameG,passwordG):
         ##print('\n\n\nPlease wait while the platform is loading....\n\n\n')
         #driver = webdriver.PhantomJS(executable_path="phantomjs-2.1.1-linux-x86_64/bin/phantomjs")
         m=driver.get("https://www.cmots.ca/basic/product.aspx")
+        # try:
+
+        #     element = WebDriverWait(driver, 10).until(
+        #         EC.presence_of_element_located((By.ID, "Password"))
+        #         )
+        # finally:
+        #     driver.quit()
         username = driver.find_element_by_id("Username")
         password = driver.find_element_by_id("Password")
+        
         # username.send_keys("naumanshakir3s@gmail.com")
         # password.send_keys("cmots@A123")
         username.send_keys(userNameG)
@@ -272,7 +281,14 @@ def populateData():
         #print('Products ',ProductsList)
 
         m=driver.get("https://www.cmots.ca/package/temperature/realtime.aspx")
-        time.sleep(3)
+        time.sleep(2)
+        # try:
+        #     element = WebDriverWait(driver, 10).until(
+        #         EC.presence_of_element_located((By.ID, "dataList"))
+        #     )
+        # finally:
+        #     # driver.quit()
+            
         content = driver.page_source
         soup = BeautifulSoup(content)
         g=soup.find_all("div", id=lambda value: value and value.endswith("_Temperature"))
@@ -427,9 +443,11 @@ while 1:
                 cursor=cursor+1
             #print('exiting current session')
             exitSession()
+        
         except Exception as e:
             print(e)
 
+    gc.collect()
     # chrome_options = Options()  
     # chrome_options.add_argument("--headless") 
 
