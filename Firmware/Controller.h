@@ -29,7 +29,9 @@ void changeRelayState(int state){
 void setupDS18B20() {
  sensors.begin();
 }
-
+int requestTemp(){
+  sensors.requestTemperatures();
+}
 float getTempValue() {
   float tempC = sensors.getTempCByIndex(0);
 

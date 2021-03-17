@@ -1,3 +1,4 @@
+#define ARDUINO_ARCH_ESP32 1
 
 #if defined(ARDUINO_ARCH_ESP8266)
 #include <ESP8266WiFi.h>
@@ -18,6 +19,9 @@ WebServer server;
 #include "Controller.h"
 #include "SoftwareStack.h"
 #include "settings.h"
+#include "PIDController.h"
+#include "OLEDHandle.h"
+
 #ifndef BUILTIN_LED
 #define BUILTIN_LED  2  // backward compatibility
 #endif
@@ -27,7 +31,7 @@ AutoConnectConfig config;
 AutoConnect         portal(server);
 
 String loggedIn="";
-
+String IPAddress="";
 
 String mac=(WiFi.macAddress());
 char __mac[sizeof(mac)];    
@@ -48,6 +52,19 @@ String devList[10];
 String IMEIsList[10];
 String LastUpdated="";
 String internetStatus="Not-Connected";
+
+void MQTTUnSubscribe();
+void MQTTSubscriptions();
+void callback(char* topic, byte* payload, unsigned int length);
+void reconnect();
+bool mqttConnect();
+void mqttPublish(String path,String msg);
+void cmotsValues();
+void handleRoot();
+void sendRedirect(String uri);
+void handleGPIO();
+bool atDetect(IPAddress& softapIP);
+
 void MQTTUnSubscribe(){
     String topicN=String("SmartTControl/data/devices/")+OLDemailAddress;
     String topicU=String("SmartTControl/lastUpdated/devices/")+OLDemailAddress;
@@ -96,9 +113,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
       if(nD==1){
       Serial.print("Data :::");
       Serial.println(String(pLoad));
-      devList[0]=ss.StringSeparator(pLoad,';',1);//1 is temp 0 is imei
-      IMEIsList[0]=ss.StringSeparator(pLoad,';',0);//1 is temp 0 is imei
+      devList[0]=ss.StringSeparator(pLoad,';',1);//1 is temp; 0 is imei
+      IMEIsList[0]=ss.StringSeparator(pLoad,';',0);//1 is temp; 0 is imei
       Serial.println(devList[0]);
+
+      LcdPrint("IP"+String(IPAddress),"T1:"+String(devList[0])+String("T2:")+String(getTempValue()));
+      setPointConfig(devList[0].toFloat());
       }
       if(nD>1){
         for (int i=0;i<nD;i++){
@@ -112,6 +132,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
             IMEIsList[i]=ss.StringSeparator(IMEIs,',',i);
             Serial.println(IMEIsList[i]);
+            LcdPrint("IP"+String(IPAddress),"T1:"+String(devList[0])+String("T2:")+String(getTempValue()));
+            setPointConfig(devList[0].toFloat());
         //IMEIsList[1]=ss.StringSeparator(IMEIs,',',1);
 
         }
@@ -377,6 +399,7 @@ void handleGPIO() {
 
 bool atDetect(IPAddress& softapIP) {
   Serial.println("Captive portal started, SoftAP IP:" + softapIP.toString());
+  LcdPrint("Open esp32.local",softapIP.toString()); 
   return true;
 }
 
@@ -387,6 +410,8 @@ void setup() {
   Serial.println();
   SetupRelay();
   setupDS18B20();
+  setupOLED();
+  LcdPrint("SmartTCtrl","V1.0");
   
   pinMode(BUILTIN_LED, OUTPUT);
 
@@ -419,7 +444,9 @@ void setup() {
   // Starts user web site included the AutoConnect portal.
   portal.onDetect(atDetect);
   if (portal.begin()) {
+    IPAddress=WiFi.localIP().toString();
     Serial.println("Started, IP:" + WiFi.localIP().toString());
+    LcdPrint("IP"+String(IPAddress),"");
   }
   else {
     Serial.println("Connection failed.");
