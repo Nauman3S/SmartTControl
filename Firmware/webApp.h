@@ -141,7 +141,7 @@ void handleGPIO() {
   String em=String(server.arg("email"));
   emailAddress=em;
   String pas=String(server.arg("pass"));
-  String freq=String(server.arg("freq"));
+  //String freq=String(server.arg("freq"));
   Serial.println(em);
   Serial.println(pas);
   String dataV=String(em);

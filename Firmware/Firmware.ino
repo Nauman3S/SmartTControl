@@ -1,7 +1,9 @@
 
 #include "consts_Headers.h"
+#include "EEPROMHandler.h"
 #include "MQTTFuncs.h"
 #include "webApp.h"
+
 
 void setup() {
   delay(1000);
@@ -12,6 +14,7 @@ void setup() {
   setupDS18B20();
   setupOLED();
   setupPID();
+  setupEEPROM();
   
   pinMode(BUILTIN_LED, OUTPUT);
 
