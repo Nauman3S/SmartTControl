@@ -20,6 +20,7 @@ WebServer server;
 #include "settings.h"
 #include "PIDController.h"
 #include "OLEDHandle.h"
+#include "zcdHandler.h"
 #ifndef BUILTIN_LED
 #define BUILTIN_LED  2  // backward compatibility
 #endif
@@ -392,6 +393,7 @@ void setup() {
   delay(1000);
   Serial.begin(115200);
   Serial.println();
+  setupFreq();
   SetupRelay();
   setupDS18B20();
   setupOLED();
@@ -449,6 +451,7 @@ void loop() {
   if(devList[0]!=String("0")){//check if data received from the cmots platform
   loopPID();
   }
+  loopZCD();
   
   if (!mqttClient.connected()) {
     reconnect();
