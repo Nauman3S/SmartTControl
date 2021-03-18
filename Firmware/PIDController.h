@@ -9,7 +9,8 @@
 #define KP .12
 #define KI .0003
 #define KD 0
-const double TimeBase=5000;//pulse width
+double TimeBase=5000;//pulse width
+//pulse width 20ms for 50hz and 16.667=17 for 60hz
 
 double temperature, outputVal;
 double setPoint=22.13;
@@ -22,7 +23,11 @@ bool relayState;
 AutoPIDRelay myPID(&temperature, &setPoint, &relayState, TimeBase,  KP, KI, KD);
 
 unsigned long lastTempUpdate; //tracks clock time of last temp update
-
+void configPulseWidth(double val){
+  TimeBase=val;
+  AutoPIDRelay myPIDNew(&temperature, &setPoint, &relayState, TimeBase,  KP, KI, KD);
+  myPID=myPIDNew;
+}
 //call repeatedly in loop, only updates after a certain time interval
 //returns true if update happened
 void setPointConfig(double setPt){
