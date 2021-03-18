@@ -78,6 +78,9 @@ void setupFreq(void) {
 // }
  
 // main loop
+float getFrequency(){
+  return frequency;
+}
 void loopZCD() {
  
   // save current Timer1 value
