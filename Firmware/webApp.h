@@ -122,7 +122,7 @@ void handleRoot() {
   page += String(F("<p>Server State<br><a class=\"button\" href=\"/io?v=low\">STOP</a><a class=\"button\" href=\"/io?v=high\">RUN</a></p>"));
 
 
-  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"Password\" type=\"text\" id=\"pass\" name=\"pass\"><br><br> <input type=\"text\" id=\"freq\" name=\"freq\" placeholder=\"Data Freq(sec).\" value=\"1.5\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>Press RUN after 5 seconds of submitting creds.</p>"));
+  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"Password\" type=\"text\" id=\"pass\" name=\"pass\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
 
   page += String(F("</body></html>"));
 

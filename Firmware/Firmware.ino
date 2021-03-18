@@ -2,12 +2,6 @@
 #include "consts_Headers.h"
 #include "MQTTFuncs.h"
 #include "webApp.h"
-bool atDetect(IPAddress& softapIP) {
-  Serial.println("Captive portal started, SoftAP IP:" + softapIP.toString());
-  LcdPrint("IP",softapIP.toString());
-  return true;
-}
-
 
 void setup() {
   delay(1000);
