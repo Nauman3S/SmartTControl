@@ -50,6 +50,7 @@ String devList[10];
 String IMEIsList[10];
 String LastUpdated="";
 String internetStatus="Not-Connected";
+int selectedDeviceIndex=0;
 
 bool atDetect(IPAddress& softapIP) {
   Serial.println("Captive portal started, SoftAP IP:" + softapIP.toString());

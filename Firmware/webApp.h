@@ -53,14 +53,17 @@ void cmotsValues(){
     page += String((LastUpdated));
     page += String(F("</h6><br><br>"));
 
+    page += String(F("<h6>Press an IMEI button to select "));
+    page += String(F("</h6><br><br>"));
+
     for (int j=0;j<nD;j++){
 
     page += String(F("<h4>Sensor "));
     page += String((j));
     page += String("</h4><br>  ");
-    page += String(F("<h5>IMEI: "));
+    page += String(F("<button>IMEI "));
     page += String((IMEIsList[j]));
-    page += String(F("</h5><br>"));
+    page += String(F("</button><br>"));
     page += String(F("<h5>Temperature: "));
     page += String((devList[j]));
     page += String(F("</h5><br><br>"));
@@ -123,7 +126,9 @@ void handleRoot() {
 
 
   page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"Password\" type=\"text\" id=\"pass\" name=\"pass\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
-
+  page += String(F("<h5>Selected IMEI: "));
+  page += String((IMEIsList[selectedDeviceIndex]));
+  page += String(F("</h5>"));
   page += String(F("</body></html>"));
 
   
