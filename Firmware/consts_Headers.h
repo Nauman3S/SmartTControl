@@ -1,3 +1,6 @@
+#define USE_WIFI 1
+#define USE_GPRS 0
+
 #if defined(ARDUINO_ARCH_ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -25,8 +28,10 @@ WebServer server;
 #endif
 
 SoftwareStack ss;//SS instance
+
 AutoConnectConfig config;
 AutoConnect         portal(server);
+
 
 String loggedIn="";
 
@@ -43,8 +48,11 @@ const char *mqtt_client_name = __mac;//"12312312312332212";// any random alphanu
 #define BUFFER_SIZE 250
 String incoming="";
 String incomingTopic="";
+
+#ifdef USE_WIFI
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
+#endif
 
 String devList[10];
 String IMEIsList[10];
