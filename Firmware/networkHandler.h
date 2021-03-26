@@ -28,7 +28,7 @@ const char user[] = "";
 const char pass[] = "";
 
 // MQTT details
-#ifdef USE_GPRS
+#if USE_GPRS
 #include <TinyGsmClient.h>
 //#include <PubSubClient.h>already included
 #endif
@@ -39,14 +39,15 @@ const char pass[] = "";
   TinyGsm modem(debugger);
 #else
 
-TinyGsm modem(SerialAT);
+
 #endif
-#ifdef USE_GPRS
+#if USE_GPRS
+TinyGsm modem(SerialAT);
 TinyGsmClient client(modem);
 PubSubClient mqtt(client);
 #endif
 void setupGPRS() {
-#ifdef USE_GPRS
+#if USE_GPRS
 SerialAT.begin(115200);
   vTaskDelay(1000);
 #endif
@@ -58,16 +59,20 @@ SerialAT.begin(115200);
   // MQTT Broker setup
 }
 void initModem(){
+    #if USE_GPRS
     modem.init();
     if (!modem.gprsConnect(apn, user, pass)) {
     //SerialMon.println(" fail");
     
       vTaskDelay(5000);
 }
+#endif
 }
 
 void powerOffModem(){
     // Try to power-off (modem may decide to restart automatically)
   // To turn off modem completely, please use Reset/Enable pins
+  #if USE_GPRS
      modem.poweroff();
+     #endif
 }

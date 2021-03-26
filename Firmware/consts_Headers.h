@@ -49,7 +49,7 @@ const char *mqtt_client_name = __mac;//"12312312312332212";// any random alphanu
 String incoming="";
 String incomingTopic="";
 
-#ifdef USE_WIFI
+#if USE_WIFI
 WiFiClient wclient;
 PubSubClient mqttClient(wclient);
 #endif
