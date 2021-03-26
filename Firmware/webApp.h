@@ -136,7 +136,11 @@ void handleRoot() {
   
   server.send(200, "text/html", page);
 }
-
+void redirectToHome() {
+  server.sendHeader("Location", "/", true);
+  server.send(302, "text/plain", "");
+  //server.client().stop();
+}
 void sendRedirect(String uri) {
   server.sendHeader("Location", uri, true);
   server.send(302, "text/plain", "");
@@ -146,6 +150,7 @@ void handleDEV() {
   String argV=String(server.arg("v"));
   Serial.println(argV);
   selectedDeviceIndex= argV.toInt();
+  redirectToHome();
   
 }
 void handleGPIO() {
