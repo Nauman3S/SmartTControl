@@ -61,11 +61,11 @@ void cmotsValues(){
     page += String(F("<h4>Sensor "));
     page += String((j));
     page += String("</h4><br>  ");
-    page += String(F("<button href=\"/io?v="));
+    page += String(F("<a class=\"button\" href=\"/dev?v="));
     page += String(j);
-    page += String(F("\">IMEI >"));
+    page += String(F("\">IMEI "));
     page += String((IMEIsList[j]));
-    page += String(F("</button><br>"));
+    page += String(F("</a><br>"));
     page += String(F("<h5>Temperature: "));
     page += String((devList[j]));
     page += String(F("</h5><br><br>"));
@@ -142,7 +142,12 @@ void sendRedirect(String uri) {
   server.send(302, "text/plain", "");
   server.client().stop();
 }
-
+void handleDEV() {
+  String argV=String(server.arg("v"));
+  Serial.println(argV);
+  selectedDeviceIndex= argV.toInt();
+  
+}
 void handleGPIO() {
   OLDemailAddress=emailAddress;
   String em=String(server.arg("email"));
