@@ -43,6 +43,7 @@ void setup() {
   server.on("/", handleRoot);
   server.on("/io", handleGPIO);
   server.on("/dev", handleDEV);
+  server.on("/conn", handleCON);
   server.on("/cmots", cmotsValues);
 
   // Starts user web site included the AutoConnect portal.

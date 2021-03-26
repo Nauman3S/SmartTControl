@@ -131,6 +131,22 @@ void handleRoot() {
   page += String(F("<h5>Selected IMEI: "));
   page += String((IMEIsList[selectedDeviceIndex]));
   page += String(F("</h5>"));
+
+   page += String(F("<h4>Connection Mode "));
+    
+    page += String("</h4><br>  ");
+    page += String(F("<a class=\"button\" href=\"/conn?v=wifi"));
+    page += String(F("\">WiFi "));
+    page += String(F("</a><br>"));
+    page += String(F("<a class=\"button\" href=\"/conn?v=gprs"));
+    page += String(F("\">GPRS "));
+    page += String(F("</a><br>"));
+    page += String(F("<h5>SelectedMode: "));
+    
+    page += String((connectionMode));
+    page += String(F("</h5><br><br>"));
+   
+
   page += String(F("</body></html>"));
 
   
@@ -145,6 +161,18 @@ void sendRedirect(String uri) {
   server.sendHeader("Location", uri, true);
   server.send(302, "text/plain", "");
   server.client().stop();
+}
+void handleCON() {
+  String argV=String(server.arg("v"));
+  if(argV=="wifi"){
+    connectionMode="WiFi";
+  }
+  else if(argV=="gprs"){
+    connectionMode="GPRS";
+  }
+  
+  redirectToHome();
+  
 }
 void handleDEV() {
   String argV=String(server.arg("v"));
