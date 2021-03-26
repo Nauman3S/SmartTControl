@@ -61,7 +61,9 @@ void cmotsValues(){
     page += String(F("<h4>Sensor "));
     page += String((j));
     page += String("</h4><br>  ");
-    page += String(F("<button>IMEI "));
+    page += String(F("<button href=\"/io?v="));
+    page += String(j);
+    page += String(F("\">IMEI >"));
     page += String((IMEIsList[j]));
     page += String(F("</button><br>"));
     page += String(F("<h5>Temperature: "));
@@ -168,6 +170,7 @@ void handleGPIO() {
     mqttPublish("SmartTControl/device/run","1");//to off
     }
    else{
+     Serial.println(String(server.arg("v")));
     
    }
    

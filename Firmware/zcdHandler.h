@@ -1,7 +1,9 @@
 
+#define USING_INTERRUPTS 0
 volatile int interruptCounter;
 int totalInterruptCounter;
  
+#if USING_INTERRUPTS
 hw_timer_t * timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
@@ -21,7 +23,7 @@ void IRAM_ATTR onTimer() {
   portEXIT_CRITICAL_ISR(&timerMux);
  
 }
- 
+#endif
 
 
 uint16_t tmr1 = 0;
@@ -30,7 +32,8 @@ float period, frequency;
  const byte interruptPin = 25;
 volatile int OpinterruptCounter = 0;
 int OpnumberOfInterrupts = 0;
- 
+
+#if USING_INTERRUPTS
 portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
  
 void IRAM_ATTR OphandleInterrupt() {
@@ -41,22 +44,14 @@ void IRAM_ATTR OphandleInterrupt() {
   timerRestartN(timer);
 }
  
-
+#endif
 void setupFreq(void) {
  
  
-  // // Timer1 module configuration
-  // TCCR1A = 0;
-  // TCCR1B = 2;   // enable Timer1 module with 1/8 prescaler ( 2 ticks every 1 us)
-  // TCNT1  = 0;   // Set Timer1 preload value to 0 (reset)
-  // TIMSK1 = 1;   // enable Timer1 overflow interrupt
- 
-  // EIFR |= 1;  // clear INT0 flag
-  // pinMode(18, INPUT_PULLUP);
-  // attachInterrupt(18, timer1_get, FALLING);  // enable external interrupt (INT0)
 
-
+  
   pinMode(interruptPin, INPUT_PULLUP);
+  #if USING_INTERRUPTS
   attachInterrupt(digitalPinToInterrupt(interruptPin), OphandleInterrupt, FALLING);
 
   timer = timerBegin(0, 80, true);
@@ -64,28 +59,19 @@ void setupFreq(void) {
   timerAlarmWrite(timer, 1000000, true); //1 000 000 microseconds, is equal to 1 second.
   timerWrite(timer, 0);
   timerAlarmEnable(timer);
+  #endif
 }
  
 
  
-// void timer1_get() {
-//   tmr1 = TCNT1;
-//   TCNT1  = 0;   // reset Timer1
-// }
- 
-// ISR(TIMER1_OVF_vect) {  // Timer1 interrupt service routine (ISR)
-//   tmr1 = 0;
-// }
- 
-// main loop
 float getFrequency(){
   return frequency;
 }
 void loopZCD() {
- 
+ #if USING_INTERRUPTS
   // save current Timer1 value
   if (interruptCounter > 0) {
- 
+    
     portENTER_CRITICAL(&timerMux);
     interruptCounter--;
     portEXIT_CRITICAL(&timerMux);
@@ -107,7 +93,7 @@ void loopZCD() {
   else{
     frequency = 80000000.0/(16UL*value);
   }
-  
+  #endif
  
 }
  
