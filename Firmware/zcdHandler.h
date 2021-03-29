@@ -1,5 +1,5 @@
 
-#define USING_INTERRUPTS 0
+#define USING_INTERRUPTS 1
 volatile int interruptCounter;
 int totalInterruptCounter;
  
@@ -78,8 +78,8 @@ void loopZCD() {
  
     totalInterruptCounter++;
  
-    Serial.print("An interrupt as occurred. Total number: ");
-    Serial.println(totalInterruptCounter);
+ //   Serial.print("An interrupt as occurred. Total number: ");
+   // Serial.println(totalInterruptCounter);
  
   }
   uint16_t value = tmr1;
