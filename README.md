@@ -101,6 +101,17 @@ Add additional notes about how to deploy this on a live system. -->
 - [ESP32-Arduino-Core](https://github.com/espressif/arduino-esp32) - Arduino Core for ESP32
 - [Arduino](arduino.cc/) - Arduino Environment
 
+## Circuit Diagram and PCB
+### Circuit Diagram
+
+![Circuit](Circuit/Circuit_bb.png)
+
+### PCB
+
+![3D PCB](PCB/3dPCB.png)
+
+![2D PCB](PCB/2dPCB.png)
+
 ## ✍️ Authors <a name = "authors"></a>
 
 - [@Nauman3S](https://github.com/Nauman3S) -  Initial work
