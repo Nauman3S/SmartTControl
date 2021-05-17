@@ -108,9 +108,9 @@ Add additional notes about how to deploy this on a live system. -->
 
 ### PCB
 
-![3D PCB](PCB/3dPCB.png)
+![3D PCB](PCB/view_3d.png)
 
-![2D PCB](PCB/2dPCB.png)
+![2D PCB](PCB/view_2d.png)
 
 ## ✍️ Authors <a name = "authors"></a>
 
