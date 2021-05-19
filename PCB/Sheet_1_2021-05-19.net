@@ -1,20 +1,4 @@
 [
-R1
-RES-TH_BD4.0-L10.5-P14.50-D0.6
-4.7K
-
-
-
-]
-[
-R2
-1/4 WATT RESISTOR
-22K
-
-
-
-]
-[
 U3
 HLK-PM03
 HLK-PM03
@@ -47,9 +31,9 @@ RES-TH_L5.5-W5.0-P5.00-D0.6
 
 ]
 [
-R3
-RES-TH_BD4.0-L11.5-P15.50-D0.7
-10K
+R7
+RES-TH_L5.5-W5.0-P5.00-D0.6
+101KD05J
 
 
 
@@ -95,8 +79,56 @@ YC0220500000G
 
 ]
 [
+R1
+220 RESISTOR 1/2W
+220_R_1/2W
+
+
+
+]
+[
 C1
 EL. CAP. 100UF
+100uF
+
+
+
+]
+[
+U5
+PWRM-TH_HLK-10M12
+HLK-10M12
+
+
+
+]
+[
+C6
+CAP-TH_BD5.0-P2.00-D0.8-FD
+10uF
+
+
+
+]
+[
+C9
+CAP-TH_BD5.0-P2.00-D0.8-FD
+10uF
+
+
+
+]
+[
+C5
+CAP-TH_BD5.0-P2.00-D0.8-FD
+100uF
+
+
+
+]
+[
+C8
+CAP-TH_BD5.0-P2.00-D0.8-FD
 100uF
 
 
@@ -111,9 +143,33 @@ ESP32_DEVKIT_V1
 
 ]
 [
-R4
-RES-TH_BD2.2-L6.5-P10.50-D0.6
-100K
+SW1
+PUSH BUTTON
+Push Button - 6x6mm - 2 pins
+
+
+
+]
+[
+C3
+CAP-TH_L10.0-W4.5-P7.50-D1.0
+100nF
+
+
+
+]
+[
+R6
+24K RESISTOR 1/2W
+24K_R_1/2W
+
+
+
+]
+[
+R3
+10K RESISTOR 1/2W
+10k_R_1/2W
 
 
 
@@ -159,9 +215,17 @@ REGULADOR DD2712SA 5V
 
 ]
 [
-U7
-HLK-PM12
-HLK-PM12
+C4
+CAP-TH_BD8.0-P3.50-D1.0-FD
+220uF
+
+
+
+]
+[
+C7
+CAP-TH_BD8.0-P3.50-D1.0-FD
+220uF
 
 
 
@@ -170,6 +234,22 @@ HLK-PM12
 Q1
 2N2222A
 2N2222A facile for souder
+
+
+
+]
+[
+R8
+4.7 RESISTOR 1/2W
+4.7K_R_1/2W
+
+
+
+]
+[
+R2
+100K RESISTOR 1/2W
+100k_R_1/2W
 
 
 
@@ -188,51 +268,68 @@ U2-7
 )
 
 (
+12V+ 
+U5-4
+C7-1
+C8-1
+C9-1
+U9-2
+U10-1
+)
+
+(
+SSR_3 
+SSR-3
+R1-1
+)
+
+(
+D2 
+U6-2
+R8-2
+U1-30
+)
+
+(
+U1_18 
+U1-18
+SW1-2
+)
+
+(
 AC2 
 SSR-2
 R5-1
 OK1-2
-U7-AC2
+U5-2
 U3-2
 U8-1
+R7-2
+C3-1
 )
 
 (
 AC1 
 U4-2
 D2-2
-U7-AC1
+U5-1
 U3-1
 U8-2
-)
-
-(
-D2 
-U6-2
-R1-2
-U1-30
-)
-
-(
-OK1_1 
-OK1-1
-R4-2
-)
-
-(
-R4_1 
-D2-1
-R4-1
+R7-1
+C3-2
 )
 
 (
 3V3 
-SSR-3
-D1-2
+C4-1
 U3-4
+C5-1
+C6-1
+R1-2
+D1-2
 OK1-4
 S1-2
-R1-1
+R8-1
 U6-1
 )
 
@@ -249,15 +346,8 @@ D1-1
 )
 
 (
-12V+ 
-U9-2
-U10-1
-U7-DC+
-)
-
-(
 Q1_2 
-R2-1
+R6-2
 Q1-2
 )
 
@@ -268,14 +358,33 @@ Q1-3
 )
 
 (
+D2_1 
+D2-1
+R2-1
+)
+
+(
+OK1_1 
+OK1-1
+R2-2
+)
+
+(
 GND 
+SW1-1
+U5-3
+C8-2
+C7-2
+C9-2
 Q1-1
-U7-DC-
 U10-2
 C2-1
 C1-2
 U9-1
+C4-2
 U3-3
+C6-2
+C5-2
 U2-6
 S1-1
 R3-2
@@ -313,7 +422,7 @@ U2-9
 (
 RELAYD4 
 U1-29
-R2-2
+R6-1
 )
 
 (
