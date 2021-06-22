@@ -3,7 +3,9 @@
 #include "networkHandler.h"
 #include "EEPROMHandler.h"
 #include "MQTTFuncs.h"
+#include "wifiPostReq.h"
 #include "webApp.h"
+
 
 
 
@@ -11,6 +13,7 @@ void setup() {
   delay(1000);
   Serial.begin(115200);
   Serial.println();
+  setupWiFiHTTP();
   setupFreq();
   SetupRelay();
   setupDS18B20();
@@ -69,6 +72,7 @@ void loop() {
   server.handleClient();
   portal.handleRequest();   // Need to handle AutoConnect menu.
   //mqttPublish("SmartTControl/d/v","success");
+  postReq();
   if(devList[0]!=String("0")){//check if data received from the cmots platform
   loopPID();
   }

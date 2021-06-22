@@ -127,8 +127,8 @@ void handleRoot() {
   page += String(F("<p>Server State<br><a class=\"button\" href=\"/io?v=low\">STOP</a><a class=\"button\" href=\"/io?v=high\">RUN</a></p>"));
 
 
-  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"Password\" type=\"text\" id=\"pass\" name=\"pass\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
-  page += String(F("<h5>Selected IMEI: "));
+  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"IMEI\" type=\"text\" id=\"pass\" name=\"imei\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
+  page += String(F("<h5>Connected IMEI: "));
   page += String((IMEIsList[selectedDeviceIndex]));
   page += String(F("</h5>"));
 
@@ -185,27 +185,28 @@ void handleGPIO() {
   OLDemailAddress=emailAddress;
   String em=String(server.arg("email"));
   emailAddress=em;
-  String pas=String(server.arg("pass"));
+  String imei=String(server.arg("imei"));
   //String freq=String(server.arg("freq"));
   Serial.println(em);
-  Serial.println(pas);
+  Serial.println(imei);
   String dataV=String(em);
   dataV+=String(";");
-  dataV+=String(pas);
-  mqttPublish("SmartTControl/creds/data",dataV);
+  dataV+=String(imei);
+  IMEIStr=imei;
+ // mqttPublish("SmartTControl/creds/data",dataV);
   //mqttPublish("SmartTControl/device/freq",freq);
   //mqttPublish("SmartTControl/device/run","3");//to run
   //reconnect();//for new email address subscription
-  MQTTUnSubscribe();
+  //MQTTUnSubscribe();
   delay(0.5);
-  MQTTSubscriptions();
+  //MQTTSubscriptions();
   if (server.arg("v") == "low"){
     digitalWrite(BUILTIN_LED, LOW);
-    mqttPublish("SmartTControl/device/run","0");//to off
+    //mqttPublish("SmartTControl/device/run","0");//to off
   }
   else if (server.arg("v") == "high"){
     digitalWrite(BUILTIN_LED, HIGH);
-    mqttPublish("SmartTControl/device/run","1");//to off
+   // mqttPublish("SmartTControl/device/run","1");//to off
     }
    else{
      Serial.println(String(server.arg("v")));
