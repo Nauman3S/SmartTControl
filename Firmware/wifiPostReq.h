@@ -39,6 +39,7 @@ void postReq() {
       // Data to send with HTTP POST
       String httpRequestData = "imei="+String(IMEIStr)+String("&email=")+String(emailAddress);           
       // Send HTTP POST request
+      IMEIsList[0]=IMEIStr;
       int httpResponseCode = http.POST(httpRequestData);
       
       // If you need an HTTP request with a content type: application/json, use the following:
@@ -51,16 +52,19 @@ void postReq() {
      
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
+      if(httpResponseCode==200){
       DynamicJsonDocument doc(2048);
       //Serial.print(http.getString());
       deserializeJson(doc, http.getStream());
      StatusL=doc["status"].as<String>();
      if(StatusL.indexOf("true")>=0){
          TempL=doc["userImeiProductData"]["Temperature"].as<String>();
+         devList[0]=TempL;
          HumidL=doc["userImeiProductData"]["Humidity"].as<String>();
          PressureL=doc["userImeiProductData"]["Pressure"].as<String>();
          BattL=doc["userImeiProductData"]["Battery"].as<String>();
          ServerTime=doc["userImeiProductData"]["ServerTime"].as<String>();
+     }
          
      }
      else{

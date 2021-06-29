@@ -50,27 +50,36 @@ void cmotsValues(){
     page += String(F("</h4><br><br>"));
 
     page += String(F("<h6>Data From Server Received At: "));
-    page += String((LastUpdated));
+    page += String((ServerTime));
     page += String(F("</h6><br><br>"));
 
-    page += String(F("<h6>Press an IMEI button to select "));
+    page += String(F("<h6>Device Details "));
     page += String(F("</h6><br><br>"));
 
-    for (int j=0;j<nD;j++){
+ //   for (int j=0;j<nD;j++){
 
     page += String(F("<h4>Sensor "));
-    page += String((j));
+//    page += String((j));
     page += String("</h4><br>  ");
-    page += String(F("<a class=\"button\" href=\"/dev?v="));
-    page += String(j);
+    page += String(F("<h5"));
     page += String(F("\">IMEI "));
-    page += String((IMEIsList[j]));
-    page += String(F("</a><br>"));
+    page += String((IMEIStr));
+    page += String(F("</h5><br>"));
     page += String(F("<h5>Temperature: "));
-    page += String((devList[j]));
+    page += String((TempL));
+    page += String(F("</h5><br>"));
+    page += String(F("<h5>Humidity: "));
+    page += String((HumidL));
+    page += String(F("</h5><br>"));
+    page += String(F("<h5>Pressure: "));
+    page += String((PressureL));
+    page += String(F("</h5><br>"));
+    page += String(F("<h5>Battery: "));
+    page += String((BattL));
     page += String(F("</h5><br><br>"));
     
-    }
+    
+   // }
 
     // page += String(F("<h4>Sensor 2</h4><br>  "));
     // page += String(F("<h5>IMEI: "));
@@ -118,18 +127,18 @@ void handleRoot() {
 "</head>"
 "<body>"
   "<div class=\"menu\">" AUTOCONNECT_LINK(BAR_24) "</div>"
-  "Smart T Controller<br>"
-  "GPIO(");
-  page += String(BUILTIN_LED);
-  page += String(F(") : <span style=\"font-weight:bold;color:"));
-  page += digitalRead(BUILTIN_LED) ? String("Tomato\">HIGH") : String("SlateBlue\">LOW");
-  page += String(F("</span>"));
-  page += String(F("<p>Server State<br><a class=\"button\" href=\"/io?v=low\">STOP</a><a class=\"button\" href=\"/io?v=high\">RUN</a></p>"));
+  "<h3>Smart T Controller</h3><br>"
+  "");
+  // page += String(BUILTIN_LED);
+  // page += String(F(") : <span style=\"font-weight:bold;color:"));
+  // page += digitalRead(BUILTIN_LED) ? String("Tomato\">HIGH") : String("SlateBlue\">LOW");
+  // page += String(F("</span>"));
+  // page += String(F("<p>Server State<br><a class=\"button\" href=\"/io?v=low\">STOP</a><a class=\"button\" href=\"/io?v=high\">RUN</a></p>"));
 
 
-  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"IMEI\" type=\"text\" id=\"pass\" name=\"imei\"><br><br>  <input type=\"submit\" value=\"Submit\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
+  page += String(F("<h3>Enter your cmots.ca credentials and data freq. below</h3><br><br><form action=/io?v><input type=\"text\" id=\"email\" name=\"email\" placeholder=\"Email Address\"><br><br>    <input placeholder=\"IMEI\" type=\"text\" id=\"pass\" name=\"imei\"><br><br>  <input type=\"submit\" value=\"Connect\"></form><br><br><p>You can visit cmots tab from menu.</p>"));
   page += String(F("<h5>Connected IMEI: "));
-  page += String((IMEIsList[selectedDeviceIndex]));
+  page += String((IMEIStr));
   page += String(F("</h5>"));
 
    page += String(F("<h4>Connection Mode "));

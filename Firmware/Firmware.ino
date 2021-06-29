@@ -2,7 +2,7 @@
 #include "consts_Headers.h"
 #include "networkHandler.h"
 #include "EEPROMHandler.h"
-#include "MQTTFuncs.h"
+//#include "MQTTFuncs.h"
 #include "wifiPostReq.h"
 #include "webApp.h"
 
@@ -63,7 +63,7 @@ void setup() {
   }
 
    MDNS.addService("http", "tcp", 80);
-    mqttConnect();
+    //mqttConnect();
 
    
 }
@@ -72,19 +72,36 @@ void loop() {
   server.handleClient();
   portal.handleRequest();   // Need to handle AutoConnect menu.
   //mqttPublish("SmartTControl/d/v","success");
-  postReq();
-  if(devList[0]!=String("0")){//check if data received from the cmots platform
-  loopPID();
+  if(connectionMode==String("WiFi")){
+  if(WiFi.status() != WL_CONNECTED){
+    internetStatus=String("Not Connected!");
   }
-  loopZCD();
-  
-  if (!mqttClient.connected()) {
-    reconnect();
+  else{
+    internetStatus=String("Connected!");
+    postReq();
   }
-  mqttClient.loop();
+
   if (WiFi.status() == WL_IDLE_STATUS) {
     ESP.restart();
 
     delay(1000);
   }
+
+  }
+
+  else if(connectionMode==String("GPRS")){
+
+  }
+  
+  
+  if(devList[0]!=String("0")){//check if data received from the cmots platform
+  loopPID();
+  }
+  loopZCD();
+  
+  // if (!mqttClient.connected()) {
+  //   reconnect();
+  // }
+  // mqttClient.loop();
+  
 }
