@@ -16,7 +16,6 @@ ESP8266WebServer server;
 WebServer server;
 #endif
 #include <ESPmDNS.h>
-#include <PubSubClient.h>
 #include "Controller.h"
 #include "SoftwareStack.h"
 #include "settings.h"
@@ -39,19 +38,9 @@ String loggedIn="";
 String mac=(WiFi.macAddress());
 char __mac[sizeof(mac)];    
 
-const char *mqtt_server = "broker.hivemq.com";
-const int mqtt_port = 1883;
-const char *mqtt_user = "testUser";
-const char *mqtt_pass = "testUser@123";
-const char *mqtt_client_name = __mac;//"12312312312332212";// any random alphanumeric stirng
-//////////////////////////////
-#define BUFFER_SIZE 250
-String incoming="";
-String incomingTopic="";
-
 #if USE_WIFI
 WiFiClient wclient;
-PubSubClient mqttClient(wclient);
+//PubSubClient mqttClient(wclient);
 #endif
 
 String devList[10];
@@ -60,7 +49,7 @@ String LastUpdated="";
 String internetStatus="Not-Connected";
 int selectedDeviceIndex=0;
 String connectionMode="WiFi";
-
+String APNV="airtelgrps.com";
 bool atDetect(IPAddress& softapIP) {
   Serial.println("Captive portal started, SoftAP IP:" + softapIP.toString());
   LcdPrint("IP",softapIP.toString());

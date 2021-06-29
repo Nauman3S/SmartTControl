@@ -27,8 +27,9 @@ void loopGPRS()
   myserial.println("AT+SAPBR=3,1,\"Contype\",\"GPRS\"");
   delay(6000);
   ShowSerialData();
- 
-  myserial.println("AT+SAPBR=3,1,\"APN\",\"airtelgprs.com\"");//APN
+  String apnV=String("AT+SAPBR=3,1,\"APN\",\"")+APNV+String("\"");
+  //myserial.println("AT+SAPBR=3,1,\"APN\",\"airtelgprs.com\"");//APN
+  myserial.println(apnV.c_str());//APN
   delay(6000);
   ShowSerialData();
  
