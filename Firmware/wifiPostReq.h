@@ -64,6 +64,8 @@ void postReq() {
          PressureL=doc["userImeiProductData"]["Pressure"].as<String>();
          BattL=doc["userImeiProductData"]["Battery"].as<String>();
          ServerTime=doc["userImeiProductData"]["ServerTime"].as<String>();
+         LcdPrint("T1:"+String(devList[0]),"T2:"+String(getTempValue()));
+         setPointConfig(devList[0].toFloat());
      }
          
      }

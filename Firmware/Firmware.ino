@@ -1,10 +1,9 @@
 
 #include "consts_Headers.h"
-#include "networkHandler.h"
 #include "EEPROMHandler.h"
-//#include "MQTTFuncs.h"
 #include "wifiPostReq.h"
 #include "webApp.h"
+#include "gprsPostReq.h"
 
 
 
@@ -14,6 +13,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println();
   setupWiFiHTTP();
+  setupGPRS();
   setupFreq();
   SetupRelay();
   setupDS18B20();
@@ -23,17 +23,6 @@ void setup() {
   
   pinMode(BUILTIN_LED, OUTPUT);
 
-  // Put the home location of the web site.
-  // But in usually, setting the home uri is not needed cause default location is "/".
-  //portal.home("/");   
-  //  if (portal.begin()) {
-  //   if (MDNS.begin("esp32")) {
-  //     MDNS.addService("http", "tcp", 80);
-  //   }
-  //   else{
-  //     delay(1000);
-  //   }
-  // }
   if (!MDNS.begin("esp32")) {
         Serial.println("Error setting up MDNS responder!");
         while(1) {
@@ -90,7 +79,7 @@ void loop() {
   }
 
   else if(connectionMode==String("GPRS")){
-
+    loopGPRS();
   }
   
   

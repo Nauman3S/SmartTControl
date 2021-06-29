@@ -1,65 +1,25 @@
-SoftwareSerial myserial(10, 11); // RX: 10, TX:11
 #include <ArduinoJson.h>
-StaticJsonBuffer<200> jsonBuffer; 
+#define myserial Serial1 
+void ShowSerialData();
+
  
- 
-#define DHTPIN A1
-#define DHTTYPE DHT11
- 
-RTC_DS3231 rtc;
-DHT dht(DHTPIN, DHTTYPE);
- 
-char t[32];
-char deviceID[12] = "MYTEST56";
- 
- 
-void setup()
+void setupGPRS()
 {
   myserial.begin(9600);        // the GPRS baud rate
-  Serial.begin(9600);
   Serial.println("Initializing..........");
-  dht.begin();
-  Wire.begin();
-  DynamicJsonBuffer jsonBuffer;
- 
- 
-  if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    while (1);
-  }
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  //rtc.adjust(DateTime(2020, 02, 29, 17, 50, 40));
-  delay(5000);
+  delay(2000);
 }
  
-void loop()
+void loopGPRS()
 {
-  Serial.println("");
-  Serial.println("************************************************************");
-  float humidity = dht.readHumidity();
-  float temperature = dht.readTemperature();
- 
-  DateTime now = rtc.now();
- 
-  sprintf(t, "%02d:%02d:%02d %02d/%02d/%02d",  now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
- 
-  Serial.print("Device ID: ");
-  Serial.println(deviceID);
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.println(" °C");
-  Serial.print("Humidity: ");
-  Serial.print(humidity);
-  Serial.println(" %");
-  Serial.print(F("Time/Date: "));
-  Serial.println(t);
-  delay(1000);
- 
+  
  
  /********************GSM Communication Starts********************/
  
   if (myserial.available())
-  Serial.write(myserial.read());
+  {
+    Serial.write(myserial.read());
+  }
  
   myserial.println("AT");
   delay(3000);
@@ -89,26 +49,17 @@ void loop()
   delay(6000);
   ShowSerialData();
  
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& object = jsonBuffer.createObject();
   
-  object.set("deviceID",deviceID);
-  object.set("humidity",humidity);
-  object.set("temperature",temperature);
-  object.set("timedate",t);
+  String sendtoserver= "imei="+String(IMEIStr)+String("&email=")+String(emailAddress);
   
-  object.printTo(Serial);
-  Serial.println(" ");  
-  String sendtoserver;
-  object.prettyPrintTo(sendtoserver);
   delay(4000);
  
-  myserial.println("AT+HTTPPARA=\"URL\",\"http://192.xxxxxxxxxxxxxxxxxxxxxxxx.php\""); //Server address
+  myserial.println("AT+HTTPPARA=\"URL\",\"http://cmots.ca:8081/api/checkProductInfo"); //Server address
   delay(4000);
   ShowSerialData();
  
   myserial.println("AT+HTTPPARA=\"CONTENT\",\"application/json\"");
-  delay(4000);
+  delay(2000);
   ShowSerialData();
  
  
@@ -120,11 +71,11 @@ void loop()
   myserial.println(sendtoserver);
   delay(6000);
   ShowSerialData;
- 
+  // set http action type 0 = GET, 1 = POST, 2 = HEAD
   myserial.println("AT+HTTPACTION=1");
   delay(6000);
   ShowSerialData();
- 
+   // read server response
   myserial.println("AT+HTTPREAD");
   delay(6000);
   ShowSerialData();
@@ -140,9 +91,31 @@ void loop()
  
 void ShowSerialData()
 {
-  while (myserial.available() != 0)
-    Serial.write(myserial.read());
-  delay(1000);
+  String str="";
+  while (myserial.available() != 0){
+    str=str+String(myserial.read());
+  }
+  Serial.println(str);
+  if(str.indexOf("{")>=0 && str.indexOf("}")>=0){
+    //valid response json arrived
+     DynamicJsonDocument doc(2048);
+      //Serial.print(http.getString());
+      deserializeJson(doc, str);
+     StatusL=doc["status"].as<String>();
+     if(StatusL.indexOf("true")>=0){
+         TempL=doc["userImeiProductData"]["Temperature"].as<String>();
+         devList[0]=TempL;
+         HumidL=doc["userImeiProductData"]["Humidity"].as<String>();
+         PressureL=doc["userImeiProductData"]["Pressure"].as<String>();
+         BattL=doc["userImeiProductData"]["Battery"].as<String>();
+         ServerTime=doc["userImeiProductData"]["ServerTime"].as<String>();
+         LcdPrint("T1:"+String(devList[0]),"T2:"+String(getTempValue()));
+         setPointConfig(devList[0].toFloat());
+     }
+         
+
+  }
+  delay(200);
  
 }
 
