@@ -1,0 +1,27 @@
+[
+  {
+    "name": "mqttserver",
+    "type": "ACInput",
+    "value": "broker.hivemq.com",
+    "placeholder": "MQTT broker server",
+    "label": "Server"
+  },
+  {
+    "name": "port",
+    "type": "ACInput",
+    "value": "1883",
+    "label": "MQTT Port"
+  },
+  {
+    "name": "gatewayID",
+    "type": "ACInput",
+    "value": "12345",
+    "label": "Gateway ID"
+  },
+  {
+    "name": "nodeID",
+    "type": "ACInput",
+    "value": "67890",
+    "label": "Node ID"
+  }
+]
