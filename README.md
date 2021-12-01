@@ -8,9 +8,6 @@
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-<!-- [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE) -->
 
 </div>
 
@@ -24,84 +21,74 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
+- [Circuit](#circuit)
+- [Server Details](#server)
+- [MQTT Topic Details](#mqtt)
+- [API Details](#api)
 - [Usage](#usage)
+- [List Of Components](#list)
 - [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
-<!-- 
+
 ## 🧐 About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+This repo contains
 
-## 🏁 Getting Started <a name = "getting_started"></a>
+- Backend
+- Firmware
+- Client auto-Installer script
+- Detailed instructions
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+for SmartT Controller.
+
+## Getting Started <a name = "getting_started"></a>
+
+These instructions will get you a copy of the project up and running on your system.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+Things you need to install the FW.
 
 ```
-Give examples
+- Arduino IDE
 ```
 
-### Installing
+### Installing <a name = "installing"></a>
 
-A step by step series of examples that tell you how to get a development env running.
+A step by step series that tell you how to get the Firmware and Backend running
 
-Say what the step will be
+#### ESP32 Configuration
 
-```
-Give the example
-```
+You should have Arduino IDE Installed
 
-And repeat
+1.  Add ESP32 Board to your Arduino IDE
+1.  In your Arduino IDE, go to File> Preferences
+    Installing ESP32 Add-on in Arduino IDE Windows, Mac OS X, Linux open preferences
+1.  Enter `https://dl.espressif.com/dl/package_esp32_index.json`
+    into the “Additional Board Manager URLs” field then, click the “OK” button:
+    Note: if you already have the ESP32 boards URL, you can separate the URLs with a comma(each board will go to neaw line) as follows:
+    `https://dl.espressif.com/dl/package_esp32_index.json,\n http://arduino.esp8266.com/stable/package_esp8266com_index.json`
 
-```
-until finished
-```
+1.  Open the Boards Manager. Go to Tools > Board > Boards Manager…
+1.  Search for ESP32 and press install button for the ESP32 by Espressif Systems“:
+1.  That’s it. It should be installed after a few seconds.
+1.  In your Arduino sketchbook directory, create tools directory if it doesn't exist yet.
+1.  Unpack the tool into tools directory(present in libs/ESP32FS-1.0.zip) (the path will look like <home_dir>/Arduino/tools/ESP32FS/tool/esp32fs.jar).
+1.  Close and re-open the Arduino IDE.
 
-End with an example of getting some data out of the system or using it for a little demo.
+1.  Now copy the contents of the libs folder to the libraries directory of your Arduino
+    1. If you are using windows, the libraries directory will be Documents/Arduino/libraries
 
-## 🔧 Running the tests <a name = "tests"></a>
+##### ESP32 Node FW Uploading
 
-Explain how to run the automated tests for this system.
+1.  Select ESP32 Dev Module from Tools->Board->ESP32
+2.  Select the correct port from Tools->Port
+3.  Then open Firmware.ino file,
+4.  Select Tools > ESP32 Sketch Data Upload menu item. This should start uploading the files into ESP32 flash file system.
+5.  Now Upload the Code to your ESP32 Dev Module.
+6.  Your ESP32 is now ready to be used.
 
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## 🎈 Usage <a name="usage"></a>
-
-Add notes about how to use the system.
-
-## 🚀 Deployment <a name = "deployment"></a>
-
-Add additional notes about how to deploy this on a live system. -->
-
-## ⛏️ Built Using <a name = "built_using"></a>
-
-- [Python](https://www.python.org/) - Backend and Scrapper
-- [C++](https://isocpp.org/) - Firmware
-- [ESP32-Arduino-Core](https://github.com/espressif/arduino-esp32) - Arduino Core for ESP32
-- [Arduino](arduino.cc/) - Arduino Environment
-
-## Circuit Diagram and PCB
+## Circuit <a name = "circuit"></a>
 ### Circuit Diagram
 
 ![Circuit](Circuit/Circuit_bb.png)
@@ -113,6 +100,101 @@ Add additional notes about how to deploy this on a live system. -->
 ![3D PCB](PCB/view_3d_2.png)
 
 ![2D PCB](PCB/view_2d.png)
+
+## Server Details <a name = "server"></a>
+
+* This Section was used for WebScrapper based implementation of SmartTControl
+### Monitoring
+
+- CapRover
+
+### List of Packages installed on server
+
+- Mosquitto Broker
+- NodeJS, NPM, Node, NVM
+- PM2
+- ufw
+- Caprover
+- Docker
+- mongod
+- mongo-express
+
+### Version Details
+
+- Node v12.16.1
+- NPM v6.13.4
+
+
+## API Details <a name = "api"></a>
+
+### Live Sensor Nodes
+
+```http
+GET http://cmots.ca:8081/api/checkProductInfo
+```
+
+| Parameter | Type      | Description |
+| :-------- | :-------- | :---------- |
+| `imei` | `string` | IMEI of the device     |
+| `email` | `string` | email address of the cmots account     |
+
+-   Returns the data of live sensor in the format below.
+```JSON
+{
+      "status": true,
+      "userImeiProductData":
+        {
+        "Temperature": "15.70",
+        "Humidity": "-1000.00",
+        "Pressure": "-1000.00",
+        "Battery": "-1000.00",
+        "ServerTime": "2021-01-06 17:27:24.000"
+    }
+}
+```
+### Responses
+
+The CMOTS can return the following responses
+- user email not matched  
+```javascript
+{
+    "status": false,
+    "message": "User Not Found"
+}
+```
+- device imei not matched  
+```javascript
+{
+"status": false,
+"message": "Product Not Found"
+}
+
+```
+
+The `message` attribute contains a message commonly used to indicate errors or to return the logged status/
+
+The `status` attribute describes if the transaction was successful or not.
+
+
+## Usage <a name = "usage"></a>
+
+1.  Upload the code to your ESP32.
+2. Power on your ESP32, it will present you with an AP named `SmartTC-abc` (while `SmartTC` can be changed in the portal and `abc` is a unique id for each esp32)
+3. Default captive portal password `12345678AP` which can be changed in captive portal. 
+4. Connect to the ESP32 access point and open the web-browser and navigate to the link `http://esp32.local/_ac`. This link will work on most of the operating systems but if your operating system is not allowing to open it, you may want to check the captive portal IP Address from the serial monitor and can use that IP address inplace of the above mentioned URL. 
+5. The default access IP Address is `http://192.168.4.1/_ac` 
+6. You will be presented with a main dashboard as shown below(based on your device)
+7.  Once connected to a WiFi network, you can again access the captive portal using same URL or the IP Address from the Serial monitor.
+8.   You can open settings page with following default credentials
+     1.  User: **AP Name (SmartTC)**
+     2.  Password: **admin**
+
+## ⛏️ Built Using <a name = "built_using"></a>
+
+- [Python](https://www.python.org/) - Backend and Scrapper
+- [C++](https://isocpp.org/) - Firmware
+- [ESP32-Arduino-Core](https://github.com/espressif/arduino-esp32) - Arduino Core for ESP32
+- [Arduino](arduino.cc/) - Arduino Environment
 
 ## ✍️ Authors <a name = "authors"></a>
 
