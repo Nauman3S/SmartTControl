@@ -182,6 +182,7 @@ void setup() //main setup functions
     setupOLED();
     setupWiFiHTTP();
     setupFreq();
+    setupPID();
     delay(1000);
 
     if (!MDNS.begin("esp32")) //starting mdns so that user can access webpage using url `esp32.local`(will not work on all devices)
@@ -338,6 +339,7 @@ void loop()
 
     portal.handleRequest();
     loopZCD();
+    loopPID();
 
     if (n2.repeat()) //publish data to mqtt server
     {
@@ -354,7 +356,8 @@ void loop()
         LcdPrint("CmotsTemp: ", TempL);
         // Serial.println(getFrequency());
     }
-    if(n4.repeat()){
-        LcdPrint("Freq: ", String(getFrequency()));
+    if (n4.repeat())
+    {
+        LcdPrint("SetPoint: ", String(getSetPoint()));
     }
 }

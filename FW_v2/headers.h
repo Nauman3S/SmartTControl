@@ -72,6 +72,7 @@ fs::SPIFFSFS &FlashFS = SPIFFS;
 #include "statusLED.h"
 #include "Controller.h"
 #include "neoTimer.h"
+#include "PIDController.h"
 #include "OLEDHandle.h"
 #include "zcdHandler.h"
 #include "gprs.h"

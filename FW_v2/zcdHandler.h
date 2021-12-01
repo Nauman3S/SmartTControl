@@ -1,5 +1,5 @@
 
-#define USING_INTERRUPTS 1
+#define USING_INTERRUPTS 0
 volatile int interruptCounter;
 int totalInterruptCounter;
 
