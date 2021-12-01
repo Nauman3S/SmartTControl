@@ -59,19 +59,7 @@
     {
       "name": "network",
       "type": "ACText",
-      "value": "4G",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-    {
-      "name": "provider",
-      "type": "ACText",
-      "value": "Vodafone",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-    {
-      "name": "signal",
-      "type": "ACText",
-      "value": "-80 dBm",
+      "value": "WiFi",
       "style": "font-family:serif;color:#4682b4;"
     },
     {
@@ -89,19 +77,43 @@
     {
       "name": "header6",
       "type": "ACText",
-      "value": "<h4>Battery</h4>",
+      "value": "<h4>Temperature Parameters</h4>",
       "style": "text-align:center;color:#2f4f4f;"
     },
     {
-      "name": "voltage",
+      "name": "cmotsT",
       "type": "ACText",
-      "value": "4.2V",
+      "value": "0.0",
       "style": "font-family:serif;color:#4682b4;"
     },
     {
-      "name": "capacity",
+      "name": "cmotsH",
       "type": "ACText",
-      "value": "80%",
+      "value": "0.0",
+      "style": "font-family:serif;color:#4682b4;"
+    },
+    {
+      "name": "cmotsP",
+      "type": "ACText",
+      "value": "0.0",
+      "style": "font-family:serif;color:#4682b4;"
+    },
+    {
+      "name": "cmotsB",
+      "type": "ACText",
+      "value": "0.0",
+      "style": "font-family:serif;color:#4682b4;"
+    },
+    {
+      "name": "cmotsS",
+      "type": "ACText",
+      "value": "0.0",
+      "style": "font-family:serif;color:#4682b4;"
+    },
+    {
+      "name": "sensorT",
+      "type": "ACText",
+      "value": "0",
       "style": "font-family:serif;color:#4682b4;"
     },
     {
@@ -128,16 +140,33 @@
       "style": "text-align:center;color:#2f4f4f;"
     },
     {
-      "name": "ntpAdd",
-      "type": "ACInput",
-      "value": "id.pool.ntp.org",
-      "label": "NTP Address"
+      "name": "networkType",
+      "type": "ACRadio",
+      "label": "<h3>Network Type</h3>",
+      "value": [
+        "WiFi",
+        "GSM"
+      ],
+      "arrange": "vertical",
+      "checked": 1
     },
     {
       "name": "apn",
       "type": "ACInput",
       "value": "internet",
       "label": "APN"
+    },
+    {
+      "name": "apnUser",
+      "type": "ACInput",
+      "value": "internet",
+      "label": "APN Username"
+    },
+    {
+      "name": "apnPass",
+      "type": "ACInput",
+      "value": "internet",
+      "label": "APN Password"
     },
     {
       "name": "newline2",
@@ -147,130 +176,22 @@
     {
       "name": "header3",
       "type": "ACText",
-      "value": "<h4>Sensors Settings</h4>",
+      "value": "<h4>CMOTS Settings</h4>",
       "style": "text-align:center;color:#2f4f4f;"
     },
-
     {
-      "name": "caption3",
-      "type": "ACText",
-      "value": "Sensor 1 Settings",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-
-    {
-      "name": "period1",
-      "type": "ACRadio",
-      "label": "<h3>Sensor 1</h3>",
-      "value": [
-        "Enable",
-        "Disable"
-      ],
-      "arrange": "vertical",
-      "checked": 1
-    },
-    {
-      "name": "nameS1",
+      "name": "emailAddress",
       "type": "ACInput",
-      "value": "S2",
-      "label": "Name"
+      "value": "jyao@amecorp.ca",
+      "label": "Email Address"
     },
     {
-      "name": "mulS1",
+      "name": "IMEI",
       "type": "ACInput",
-      "value": "1",
-      "label": "Multiplier"
+      "value": "06180324",
+      "label": "IMEI"
     },
 
-    {
-      "name": "caption4",
-      "type": "ACText",
-      "value": "Sensor 2 Settings",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-    {
-      "name": "period2",
-      "type": "ACRadio",
-      "label": "<h3>Sensor 2</h3>",
-      "value": [
-        "Enable",
-        "Disable"
-      ],
-      "arrange": "vertical",
-      "checked": 1
-    },
-    {
-      "name": "nameS2",
-      "type": "ACInput",
-      "value": "S2",
-      "label": "Name"
-    },
-    {
-      "name": "mulS2",
-      "type": "ACInput",
-      "value": "1",
-      "label": "Multiplier"
-    },
-
-    {
-      "name": "caption5",
-      "type": "ACText",
-      "value": "Sensor 3 Settings",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-    {
-      "name": "period3",
-      "type": "ACRadio",
-      "label": "<h3>Sensor 3</h3>",
-      "value": [
-        "Enable",
-        "Disable"
-      ],
-      "arrange": "vertical",
-      "checked": 1
-    },
-    {
-      "name": "nameS3",
-      "type": "ACInput",
-      "value": "S3",
-      "label": "Name"
-    },
-    {
-      "name": "mulS3",
-      "type": "ACInput",
-      "value": "1",
-      "label": "Multiplier"
-    },
-
-    {
-      "name": "caption6",
-      "type": "ACText",
-      "value": "Sensor 4 Settings",
-      "style": "font-family:serif;color:#4682b4;"
-    },
-    {
-      "name": "period4",
-      "type": "ACRadio",
-      "label": "<h3>Sensor 4</h3>",
-      "value": [
-        "Enable",
-        "Disable"
-      ],
-      "arrange": "vertical",
-      "checked": 1
-    },
-    {
-      "name": "nameS4",
-      "type": "ACInput",
-      "value": "S4",
-      "label": "Name"
-    },
-    {
-      "name": "mulS4",
-      "type": "ACInput",
-      "value": "1",
-      "label": "Multiplier"
-    },
     {
       "name": "newline3",
       "type": "ACElement",

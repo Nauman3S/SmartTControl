@@ -6,26 +6,21 @@ String gatewayID;
 String hostName = "SmartTC";
 String apPass="123456789AP";
 String settingsPass;
-String ntpAdd;
-String apn;
-String sensorEnabled1;
-String sensorEnabled2;
-String sensorEnabled3;
-String sensorEnabled4;
-String nameS1;
-String nameS2;
-String nameS3;
-String nameS4;
-String mulS1;
-String mulS2;
-String mulS3;
-String mulS4;
+String apn="";
+String apnUser="";
+String apnPass="";
+String networkType="WiFi";
 String network="4G";
-String provider="Vodafone";
-String signal="-83 dBm";
-String voltage="4.2V";
-String capacity="80%";
+String cmotsTemp="0.0";
+String cmotsH="0.0";
+String cmotsP="0.0";
+String cmotsB="0.0";
+String cmotsS="0.0";
+String sensorTemp="0.0";
+String emailAddress="";
+String IMEI="";
 String enableC="Ena";
+
 
 
 
@@ -78,6 +73,7 @@ fs::SPIFFSFS &FlashFS = SPIFFS;
 #include "Controller.h"
 #include "neoTimer.h"
 #include "OLEDHandle.h"
+#include "zcdHandler.h"
 #include "gprs.h"
 
 

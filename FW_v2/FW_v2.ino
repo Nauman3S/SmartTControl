@@ -1,12 +1,15 @@
 #include "headers.h" //all misc. headers and functions
-#include "webApp.h"  //Captive Portal webpages
-#include <FS.h>      //ESP32 File System
+#include "wifiPostReq.h"
+#include "webApp.h" //Captive Portal webpages
+#include <FS.h>     //ESP32 File System
 //CT SB360 to vin pin
 IPAddress ipV(192, 168, 4, 1);
 
 TaskHandle_t Task1;
 Neotimer n1(2000);
 Neotimer n2(4000);
+Neotimer n3(5000);
+Neotimer n4(7000);
 String loadParams(AutoConnectAux &aux, PageArgument &args) //function to load saved settings
 {
     (void)(args);
@@ -20,14 +23,22 @@ String loadParams(AutoConnectAux &aux, PageArgument &args) //function to load sa
         AutoConnectText &networkElm = aux["network"].as<AutoConnectText>();
         AutoConnectText &providerElm = aux["provider"].as<AutoConnectText>();
         AutoConnectText &signalElm = aux["signal"].as<AutoConnectText>();
-        AutoConnectText &voltageElm = aux["signal"].as<AutoConnectText>();
-        AutoConnectText &capacityElm = aux["capacity"].as<AutoConnectText>();
+        AutoConnectText &sensorT = aux["sensorT"].as<AutoConnectText>();
+        AutoConnectText &cmotsT = aux["cmotsT"].as<AutoConnectText>();
+        AutoConnectText &cmotsHM = aux["cmotsH"].as<AutoConnectText>();
+        AutoConnectText &cmotsPM = aux["cmotsP"].as<AutoConnectText>();
+        AutoConnectText &cmotsBM = aux["cmotsB"].as<AutoConnectText>();
+        AutoConnectText &cmotsSM = aux["cmotsS"].as<AutoConnectText>();
 
         networkElm.value = String("Network: ") + network;
-        providerElm.value = String("Provider: ") + provider;
-        signalElm.value = String("Signal: ") + signal;
-        voltageElm.value = String("Voltage: ") + voltage;
-        capacityElm.value = String("Capacity: ") + capacity;
+        // providerElm.value = String("Provider: ") + provider;
+        // signalElm.value = String("Signal: ") + signal;
+        sensorT.value = String("Sensor Temperature: ") + sensorTemp;
+        cmotsT.value = String("cmots Temperature: ") + cmotsTemp;
+        cmotsHM.value = String("cmots Humidity: ") + cmotsH;
+        cmotsPM.value = String("cmots Pressure: ") + cmotsP;
+        cmotsBM.value = String("cmots Battery: ") + cmotsB;
+        cmotsSM.value = String("cmots ServerTime: ") + cmotsS;
 
         // curSValueElm.value="CurS:7788";
         param.close();
@@ -60,44 +71,26 @@ String saveParams(AutoConnectAux &aux, PageArgument &args) //save the settings
     hostName = args.arg("hostname");
     hostName.trim();
 
-    ntpAdd = args.arg("ntpAdd");
-    ntpAdd.trim();
-
     apn = args.arg("apn");
     apn.trim();
+    apnUser = args.arg("apnUser");
+    apnUser.trim();
+    apnPass = args.arg("apnPass");
+    apnPass.trim();
 
-    sensorEnabled1 = args.arg("period1");
-    sensorEnabled1.trim();
-    sensorEnabled2 = args.arg("period2");
-    sensorEnabled2.trim();
-    sensorEnabled3 = args.arg("period3");
-    sensorEnabled3.trim();
-    sensorEnabled4 = args.arg("period4");
-    sensorEnabled4.trim();
+    emailAddress = args.arg("emailAddress");
+    emailAddress.trim();
+    IMEI = args.arg("IMEI");
+    IMEI.trim();
 
-    nameS1 = args.arg("nameS1");
-    nameS1.trim();
-    nameS2 = args.arg("nameS2");
-    nameS2.trim();
-    nameS3 = args.arg("nameS3");
-    nameS3.trim();
-    nameS4 = args.arg("nameS4");
-    nameS4.trim();
-
-    mulS1 = args.arg("mulS1");
-    mulS1.trim();
-    mulS2 = args.arg("mulS2");
-    mulS2.trim();
-    mulS3 = args.arg("mulS3");
-    mulS3.trim();
-    mulS4 = args.arg("mulS4");
-    mulS4.trim();
+    networkType = args.arg("networkType");
+    networkType.trim();
 
     // The entered value is owned by AutoConnectAux of /mqtt_setting.
     // To retrieve the elements of /mqtt_setting, it is necessary to get
     // the AutoConnectAux object of /mqtt_setting.
     File param = FlashFS.open(PARAM_FILE, "w");
-    portal.aux("/mqtt_setting")->saveElement(param, {"mqttserver", "gatewayID", "port", "nodeID", "hostname", "apPass", "settingsPass", "ntpAdd", "apn", "period1", "period2", "period3", "period4", "nameS1", "nameS2", "nameS3", "nameS4", "mulS1", "mulS2", "mulS3", "mulS4"});
+    portal.aux("/mqtt_setting")->saveElement(param, {"mqttserver", "gatewayID", "port", "nodeID", "hostname", "apPass", "settingsPass", "apn", "apnUser", "apnPass", "networkType", "emailAddress", "IMEI"});
     param.close();
 
     // Echo back saved parameters to AutoConnectAux page.
@@ -109,9 +102,13 @@ String saveParams(AutoConnectAux &aux, PageArgument &args) //save the settings
     echo.value += "ESP host name: " + hostName + "<br>";
     echo.value += "AP Password: " + apPass + "<br>";
     echo.value += "Settings Page Password: " + settingsPass + "<br>";
-    echo.value += "NTP: " + ntpAdd + "<br>";
+
     echo.value += "APN: " + apn + "<br>";
-    echo.value += "Sensor 1-4 Settings Saved" + apn + "<br>";
+    echo.value += "APN Username: " + apnUser + "<br>";
+    echo.value += "APN Password: " + apnPass + "<br>";
+    echo.value += "Network Type: " + networkType + "<br>";
+    echo.value += "CMOTS EMAIL: " + emailAddress + "<br>";
+    echo.value += "CMOTS IMEI: " + IMEI + "<br>";
 
     return String("");
 }
@@ -136,6 +133,7 @@ void Task1Loop(void *pvParameters) //GPRS
     Serial.print("Task1 running on core ");
     Serial.println(xPortGetCoreID());
     setupGPRS();
+    yield();
 
     for (;;)
     {
@@ -143,6 +141,8 @@ void Task1Loop(void *pvParameters) //GPRS
         //capacity = String(getADC(5));
         if (isMQTTConnected())
         {
+            yield();
+            delay(1000);
         }
     }
 }
@@ -180,6 +180,8 @@ void setup() //main setup functions
     SetupRelay();
     setupDS18B20();
     setupOLED();
+    setupWiFiHTTP();
+    setupFreq();
     delay(1000);
 
     if (!MDNS.begin("esp32")) //starting mdns so that user can access webpage using url `esp32.local`(will not work on all devices)
@@ -211,30 +213,22 @@ void setup() //main setup functions
         AutoConnectInput &gwIDElm = mqtt_setting["gatewayID"].as<AutoConnectInput>();
         AutoConnectInput &noIDElm = mqtt_setting["nodeID"].as<AutoConnectInput>();
         AutoConnectInput &settingsPassElm = mqtt_setting["settingsPass"].as<AutoConnectInput>();
-        AutoConnectInput &ntpAddElm = mqtt_setting["ntpAdd"].as<AutoConnectInput>();
+
         AutoConnectInput &apnElm = mqtt_setting["apn"].as<AutoConnectInput>();
 
-        AutoConnectInput &nameS1Elm = mqtt_setting["nameS1"].as<AutoConnectInput>();
-        AutoConnectInput &nameS2Elm = mqtt_setting["nameS2"].as<AutoConnectInput>();
-        AutoConnectInput &nameS3Elm = mqtt_setting["nameS3"].as<AutoConnectInput>();
-        AutoConnectInput &nameS4Elm = mqtt_setting["nameS4"].as<AutoConnectInput>();
+        AutoConnectInput &apnUserElm = mqtt_setting["apnUser"].as<AutoConnectInput>();
+        AutoConnectInput &apnPassElm = mqtt_setting["apnPass"].as<AutoConnectInput>();
+        AutoConnectInput &emailAddressElm = mqtt_setting["emailAddress"].as<AutoConnectInput>();
+        AutoConnectInput &IMEIElm = mqtt_setting["IMEI"].as<AutoConnectInput>();
 
-        AutoConnectInput &mulS1Elm = mqtt_setting["mulS1"].as<AutoConnectInput>();
-        AutoConnectInput &mulS2Elm = mqtt_setting["mulS2"].as<AutoConnectInput>();
-        AutoConnectInput &mulS3Elm = mqtt_setting["mulS3"].as<AutoConnectInput>();
-        AutoConnectInput &mulS4Elm = mqtt_setting["mulS4"].as<AutoConnectInput>();
-
-        AutoConnectRadio &sensorEnabled1Elm = mqtt_setting["period1"].as<AutoConnectRadio>();
-        AutoConnectRadio &sensorEnabled2Elm = mqtt_setting["period2"].as<AutoConnectRadio>();
-        AutoConnectRadio &sensorEnabled3Elm = mqtt_setting["period3"].as<AutoConnectRadio>();
-        AutoConnectRadio &sensorEnabled4Elm = mqtt_setting["period4"].as<AutoConnectRadio>();
+        AutoConnectRadio &networkTypeElm = mqtt_setting["networkType"].as<AutoConnectRadio>();
 
         AutoConnectText &networkElm = mqtt_setting["network"].as<AutoConnectText>();
-        AutoConnectText &providerElm = mqtt_setting["provider"].as<AutoConnectText>();
-        AutoConnectText &signalElm = mqtt_setting["signal"].as<AutoConnectText>();
+        // AutoConnectText &providerElm = mqtt_setting["provider"].as<AutoConnectText>();
+        // AutoConnectText &signalElm = mqtt_setting["signal"].as<AutoConnectText>();
 
-        AutoConnectText &voltageElm = mqtt_setting["voltage"].as<AutoConnectText>();
-        AutoConnectText &capacityElm = mqtt_setting["capacity"].as<AutoConnectText>();
+        AutoConnectText &sensorTElm = mqtt_setting["sensorT"].as<AutoConnectText>();
+        AutoConnectText &cmotsTElm = mqtt_setting["cmotsT"].as<AutoConnectText>();
         //vibSValueElm.value="VibS:11";
         serverName = String(serverNameElm.value);
         port = String(portElm.value);
@@ -243,23 +237,14 @@ void setup() //main setup functions
         hostName = String(hostnameElm.value);
         apPass = String(apPassElm.value);
         settingsPass = String(settingsPassElm.value);
-        ntpAdd = String(ntpAddElm.value);
+        apnUser = String(apnUserElm.value);
+        apnPass = String(apnPassElm.value);
         apn = String(apnElm.value);
 
-        nameS1 = String(nameS1Elm.value);
-        nameS2 = String(nameS2Elm.value);
-        nameS3 = String(nameS3Elm.value);
-        nameS4 = String(nameS4Elm.value);
+        emailAddress = String(emailAddressElm.value);
+        IMEI = String(IMEIElm.value);
 
-        mulS1 = String(mulS1Elm.value);
-        mulS2 = String(mulS2Elm.value);
-        mulS3 = String(mulS3Elm.value);
-        mulS4 = String(mulS4Elm.value);
-
-        sensorEnabled1 = String(sensorEnabled1Elm.value());
-        sensorEnabled2 = String(sensorEnabled2Elm.value());
-        sensorEnabled3 = String(sensorEnabled3Elm.value());
-        sensorEnabled4 = String(sensorEnabled4Elm.value());
+        networkType = String(networkTypeElm.value());
 
         if (hostnameElm.value.length())
         {
@@ -352,6 +337,7 @@ void loop()
     server.handleClient();
 
     portal.handleRequest();
+    loopZCD();
 
     if (n2.repeat()) //publish data to mqtt server
     {
@@ -360,6 +346,15 @@ void loop()
     }
     if (n1.repeat())
     {
-        LcdPrint("Temp: ", getTempStr());
+        LcdPrint("SesnorTemp: ", getTempStr());
+    }
+    if (n3.repeat())
+    {
+        postReq();
+        LcdPrint("CmotsTemp: ", TempL);
+        // Serial.println(getFrequency());
+    }
+    if(n4.repeat()){
+        LcdPrint("Freq: ", String(getFrequency()));
     }
 }
