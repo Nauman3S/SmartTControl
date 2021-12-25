@@ -7,7 +7,7 @@ IPAddress ipV(192, 168, 4, 1);
 
 TaskHandle_t Task1;
 Neotimer n1(2000);
-Neotimer n2(4000);
+Neotimer n2(3000);
 Neotimer n3(5000);
 Neotimer n4(7000);
 String loadParams(AutoConnectAux &aux, PageArgument &args) //function to load saved settings
@@ -153,12 +153,21 @@ bool whileCP()
 
     //use this function as a main loop
 
-    if (inAP == 0)
+    ledState(AP_MODE);
+    if (n1.repeat())
     {
-        ledState(AP_MODE);
-        LcdPrint("Status: ", "AP Mode");
-        inAP = 1;
+        if (inAp == 0)
+        {
+            LcdPrint("Status: ", "AP Mode");
+            inAp = 1;
+        }
+        else if (inAp == 1)
+        {
+            LcdPrint("IP: ", WiFi.localIP().toString());
+            inAp = 0;
+        }
     }
+    // inAP = 1;
 
     loopLEDHandler();
 }
@@ -185,7 +194,7 @@ void setup() //main setup functions
     setupPID();
     delay(1000);
 
-    if (!MDNS.begin("esp32")) //starting mdns so that user can access webpage using url `esp32.local`(will not work on all devices)
+    if (!MDNS.begin("cmots")) //starting mdns so that user can access webpage using url `esp32.local`(will not work on all devices)
     {
         Serial.println("Error setting up MDNS responder!");
         while (1)
@@ -330,7 +339,7 @@ void setup() //main setup functions
     MDNS.addService("http", "tcp", 80);
     mqttConnect(); //start mqtt
 }
-
+int lcdPage = 0;
 void loop()
 {
     //don't edit this function
@@ -343,21 +352,48 @@ void loop()
 
     if (n2.repeat()) //publish data to mqtt server
     {
-        ledState(ACTIVE_MODE);
-        LcdPrint("Status: ", "Active");
+        if (lcdPage == 0)
+        {
+            ledState(ACTIVE_MODE);
+            LcdPrint("Status: ", "Active/STA");
+            lcdPage++;
+        }
+        else if (lcdPage == 1)
+        {
+            LcdPrint("SesnorTemp: ", getTempStr());
+            lcdPage++;
+        }
+        else if (lcdPage == 2)
+        {
+            postReq();
+            LcdPrint("CmotsTemp: ", TempL);
+            lcdPage++;
+        }
+        else if (lcdPage == 3)
+        {
+
+            LcdPrint("SetPoint: ", String(getSetPoint()));
+            lcdPage++;
+        }
+        else if (lcdPage == 4)
+        {
+
+            LcdPrint("IP: ", WiFi.localIP().toString());
+            lcdPage = 0;
+        }
     }
-    if (n1.repeat())
-    {
-        LcdPrint("SesnorTemp: ", getTempStr());
-    }
-    if (n3.repeat())
-    {
-        postReq();
-        LcdPrint("CmotsTemp: ", TempL);
-        // Serial.println(getFrequency());
-    }
-    if (n4.repeat())
-    {
-        LcdPrint("SetPoint: ", String(getSetPoint()));
-    }
+    // if (n1.repeat())
+    // {
+    //     LcdPrint("SesnorTemp: ", getTempStr());
+    // }
+    // if (n3.repeat())
+    // {
+    //     postReq();
+    //     LcdPrint("CmotsTemp: ", TempL);
+    //     // Serial.println(getFrequency());
+    // }
+    // if (n4.repeat())
+    // {
+    //     LcdPrint("SetPoint: ", String(getSetPoint()));
+    // }
 }
