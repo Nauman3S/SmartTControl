@@ -156,15 +156,15 @@ bool whileCP()
     ledState(AP_MODE);
     if (n1.repeat())
     {
-        if (inAp == 0)
+        if (inAP == 0)
         {
             LcdPrint("Status: ", "AP Mode");
-            inAp = 1;
+            inAP = 1;
         }
-        else if (inAp == 1)
+        else if (inAP == 1)
         {
             LcdPrint("IP: ", WiFi.localIP().toString());
-            inAp = 0;
+            inAP = 0;
         }
     }
     // inAP = 1;
