@@ -186,7 +186,7 @@ The `status` attribute describes if the transaction was successful or not.
 6. You will be presented with a main dashboard as shown below(based on your device)
 7.  Once connected to a WiFi network, you can again access the captive portal using same URL or the IP Address from the Serial monitor.
 8.   You can open settings page with following default credentials
-     1.  User: **AP Name (SmartTC)**
+     1.  User: **cmots**
      2.  Password: **admin**
 
 ## ⛏️ Built Using <a name = "built_using"></a>

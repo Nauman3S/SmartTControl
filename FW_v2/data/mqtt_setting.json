@@ -204,7 +204,7 @@
       "name": "hostname",
       "type": "ACInput",
       "label": "ESP hostname(Device & AP Name)",
-      "value": "SmartTC"
+      "value": "cmots"
     },
     {
       "name": "apPass",
