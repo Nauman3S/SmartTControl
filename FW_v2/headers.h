@@ -3,7 +3,7 @@ String channelId;
 String port;
 String nodeID;
 String gatewayID;
-String hostName = "SmartTC";
+String hostName = "cmots";
 String apPass="123456789AP";
 String settingsPass;
 String apn="";
