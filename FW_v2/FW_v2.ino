@@ -148,6 +148,55 @@ void Task1Loop(void *pvParameters) //GPRS
 }
 
 uint8_t inAP = 0;
+unsigned long tmDetection;
+const unsigned long scanInterval = 10 * 1000;
+uint8_t wifiReconnection()
+{
+    int16_t ns = WiFi.scanComplete();
+
+    if (ns == WIFI_SCAN_RUNNING)
+    {
+        // The scan is still running, nothing to do.
+    }
+    else if (ns == WIFI_SCAN_FAILED)
+    {
+        // The scan will start in the background where it has not started.
+        // But it will wait for scanInterval from the last scan
+        if (millis() - tmDetection > scanInterval)
+        {
+            WiFi.disconnect();
+            WiFi.scanNetworks(true, true, false);
+        }
+    }
+    else
+    {
+        // Now that the scan is finished, you can start checking if any known APs
+        // have been detected.
+        Serial.printf("scanNetworks:%d\n", ns);
+
+        int16_t scanResult = 0;
+        while (scanResult < ns)
+        {
+            AutoConnectCredential cred;
+            station_config_t staConfig;
+
+            if (cred.load(WiFi.SSID(scanResult++).c_str(), &staConfig) >= 0)
+            {
+                // Successfully detected a known AP, aborting captive portal,
+                // Relying on autoReconnect and reconnectInterval to reconnect.
+                Serial.printf("AP %s ready\n", (char *)staConfig.ssid);
+                WiFi.scanDelete();
+                return false;
+            }
+        }
+
+        Serial.println("No found known AP");
+        WiFi.scanDelete();
+        tmDetection = millis();
+    }
+
+    return true;
+}
 bool whileCP()
 {
 
@@ -156,21 +205,26 @@ bool whileCP()
     ledState(AP_MODE);
     if (n1.repeat())
     {
-        LcdPrint("IP: ", WiFi.localIP().toString());
+        //LcdPrint("IP: ", "192.168.4.1");//fixed IP in captive portal
+
         if (inAP == 0)
         {
             LcdPrint("Status: ", "AP Mode");
+            Serial.println("Status: AP Mode");
             inAP = 1;
         }
         else if (inAP == 1)
         {
-            LcdPrint("IP: ", WiFi.localIP().toString());
+            LcdPrint("IP: ", "192.168.4.1"); //fixed IP in captive portal
+            Serial.println("IP : 192.168.4.1");
             inAP = 0;
         }
     }
+
     // inAP = 1;
 
     loopLEDHandler();
+    return wifiReconnection();
 }
 
 void setup() //main setup functions
@@ -312,6 +366,8 @@ void setup() //main setup functions
     config.authScope = AC_AUTHSCOPE_PARTIAL;
     config.username = hostName;
     config.password = settingsPass;
+    config.autoReconnect = true;  // Attempt automatic reconnection.
+    config.reconnectInterval = 3; // Seek interval time is 180[s].
 
     portal.config(config);
     portal.whileCaptivePortal(whileCP);
@@ -357,29 +413,45 @@ void loop()
         {
             ledState(ACTIVE_MODE);
             LcdPrint("Status: ", "Active/STA");
+            Serial.println("Status: Active/STA");
             lcdPage++;
         }
         else if (lcdPage == 1)
         {
             LcdPrint("SesnorTemp: ", getTempStr());
+            Serial.print("SensorTemp: ");
+            Serial.println(getTempStr());
             lcdPage++;
         }
         else if (lcdPage == 2)
         {
             postReq();
             LcdPrint("CmotsTemp: ", TempL);
+            Serial.print("CmotsTemp: ");
+            Serial.println(TempL);
             lcdPage++;
         }
         else if (lcdPage == 3)
         {
 
             LcdPrint("SetPoint: ", String(getSetPoint()));
+            Serial.print("SetPoint: ");
+            Serial.println(String(getSetPoint()));
             lcdPage++;
         }
         else if (lcdPage == 4)
         {
 
             LcdPrint("IP: ", WiFi.localIP().toString());
+            Serial.print("IP: ");
+            Serial.println(WiFi.localIP().toString());
+            lcdPage++;
+        }
+        else if (lcdPage == 5)
+        {
+
+            LcdPrint("Address: ", "http://cmots.local");
+            Serial.println("Address: http://cmots.local");
             lcdPage = 0;
         }
     }

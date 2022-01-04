@@ -15,17 +15,18 @@ double TimeBase=5000;//pulse width
 double temperature, outputVal;
 double setPoint=22.13;
 bool relayState;
+bool intermediateRelayState=false;
 
 
 
 //input/output variables passed by reference, so they are updated automatically
 //AutoPID myPID(&temperature, &setPoint, &outputVal, OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
-AutoPIDRelay myPID(&temperature, &setPoint, &relayState, TimeBase,  KP, KI, KD);
+AutoPIDRelay myPID(&temperature, &setPoint, &intermediateRelayState, TimeBase,  KP, KI, KD);
 
 unsigned long lastTempUpdate; //tracks clock time of last temp update
 void configPulseWidth(double val){
   TimeBase=val;
-  AutoPIDRelay myPIDNew(&temperature, &setPoint, &relayState, TimeBase,  KP, KI, KD);
+  AutoPIDRelay myPIDNew(&temperature, &setPoint, &intermediateRelayState, TimeBase,  KP, KI, KD);
   myPID=myPIDNew;
 }
 //call repeatedly in loop, only updates after a certain time interval
@@ -68,7 +69,19 @@ void loopPID() {
   myPID.run(); //call every loop, updates automatically at certain time interval
   //analogWrite(OUTPUT_PIN, outputVal);
   //digitalWrite(LED_PIN, myPID.atSetPoint(1)); //light up LED when we're at setpoint +-1 degree
-  changeRelayState(relayState);
+  changeRelayState(intermediateRelayState);
+  //relay issue resolution
+  if(intermediateRelayState==true){
+    if(getSetPoint()>temperature){
+      changeRelayState(1);
+    }
+    else{
+      changeRelayState(0);
+    }
+  }
+  else{
+    changeRelayState(0);
+  }
 
 }//void loop
 

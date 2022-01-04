@@ -179,9 +179,9 @@ The `status` attribute describes if the transaction was successful or not.
 ## Usage <a name = "usage"></a>
 
 1.  Upload the code to your ESP32.
-2. Power on your ESP32, it will present you with an AP named `SmartTC-abc` (while `SmartTC` can be changed in the portal and `abc` is a unique id for each esp32)
-3. Default captive portal password `12345678AP` which can be changed in captive portal. 
-4. Connect to the ESP32 access point and open the web-browser and navigate to the link `http://esp32.local/_ac`. This link will work on most of the operating systems but if your operating system is not allowing to open it, you may want to check the captive portal IP Address from the serial monitor and can use that IP address inplace of the above mentioned URL. 
+2. Power on your ESP32, it will present you with an AP named `cmots-abc` (while `cmots` can be changed in the portal and `abc` is a unique id for each esp32)
+3. Default captive portal password `12345678` which can be changed in captive portal. 
+4. Connect to the ESP32 access point and open the web-browser and navigate to the link `http://cmots.local/_ac`. This link will work on most of the operating systems but if your operating system is not allowing to open it, you may want to check the captive portal IP Address from the serial monitor and can use that IP address inplace of the above mentioned URL. 
 5. The default access IP Address is `http://192.168.4.1/_ac` 
 6. You will be presented with a main dashboard as shown below(based on your device)
 7.  Once connected to a WiFi network, you can again access the captive portal using same URL or the IP Address from the Serial monitor.

@@ -4,7 +4,7 @@ String port;
 String nodeID;
 String gatewayID;
 String hostName = "cmots";
-String apPass="123456789AP";
+String apPass="12345678";
 String settingsPass;
 String apn="";
 String apnUser="";

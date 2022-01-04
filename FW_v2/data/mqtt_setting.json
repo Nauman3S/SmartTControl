@@ -210,7 +210,7 @@
       "name": "apPass",
       "type": "ACInput",
       "label": "ESP AP Password",
-      "value": "123456789AP"
+      "value": "12345678"
     },
     {
       "name": "settingsPass",
