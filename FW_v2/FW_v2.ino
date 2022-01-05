@@ -362,17 +362,17 @@ void setup() //main setup functions
     server.on("/relayHandler", relayHandler);
     // Starts user web site included the AutoConnect portal.
 
-    config.auth = AC_AUTH_DIGEST;
-    config.authScope = AC_AUTHSCOPE_PARTIAL;
-    config.username = hostName;
-    config.password = settingsPass;
+    // config.auth = AC_AUTH_DIGEST;
+    // config.authScope = AC_AUTHSCOPE_PARTIAL;
+    // config.username = hostName;
+    // config.password = settingsPass;
     config.autoReconnect = true;  // Attempt automatic reconnection.
     config.reconnectInterval = 3; // Seek interval time is 180[s].
 
     portal.config(config);
     portal.whileCaptivePortal(whileCP);
     portal.onDetect(atDetect);
-    portal.load(FPSTR(PAGE_AUTH));
+    // portal.load(FPSTR(PAGE_AUTH));
 
     // portal.disableMenu(AC_MENUITEM_DISCONNECT);
     // portal.disableMenu(AC_MENUITEM_OPENSSIDS);
