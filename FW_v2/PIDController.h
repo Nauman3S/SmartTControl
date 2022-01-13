@@ -1,87 +1,69 @@
-#include <AutoPID.h>
 
 
-#define TEMP_READ_DELAY 800 //can only read digital temp sensor every ~750ms
-
-//pid settings and gains
-#define OUTPUT_MIN 0
-#define OUTPUT_MAX 255
-#define KP .12
-#define KI .0003
-#define KD 0
-double TimeBase=5000;//pulse width
-//pulse width 20ms for 50hz and 16.667=17 for 60hz
-
-double temperature, outputVal;
-double setPoint=22.13;
-bool relayState;
-bool intermediateRelayState=false;
-
-
-
-//input/output variables passed by reference, so they are updated automatically
-//AutoPID myPID(&temperature, &setPoint, &outputVal, OUTPUT_MIN, OUTPUT_MAX, KP, KI, KD);
-AutoPIDRelay myPID(&temperature, &setPoint, &intermediateRelayState, TimeBase,  KP, KI, KD);
+#define TEMP_READ_DELAY 755 //can only read digital temp sensor every ~750ms
 
 unsigned long lastTempUpdate; //tracks clock time of last temp update
-void configPulseWidth(double val){
-  TimeBase=val;
-  AutoPIDRelay myPIDNew(&temperature, &setPoint, &intermediateRelayState, TimeBase,  KP, KI, KD);
-  myPID=myPIDNew;
-}
-//call repeatedly in loop, only updates after a certain time interval
-//returns true if update happened
-void setPointConfig(double setPt){
-    setPoint=setPt;
 
+double temperature, outputVal;
+double setPoint = 22.13;
+const int aihMargin = 1; //+-1
+const int aihThresh = setPoint;
+bool relayState;
+
+double aihVal = 0;
+bool aihHystOn = 0;
+
+void setPointConfig(double setPt)
+{
+  setPoint = setPt;
 }
-double getSetPoint(){
+
+double getSetPoint()
+{
   return setPoint;
 }
-bool updateTemperature() {
-  if ((millis() - lastTempUpdate) > TEMP_READ_DELAY) {
+bool updateTemperature()
+{
+  if ((millis() - lastTempUpdate) > TEMP_READ_DELAY)
+  {
     temperature = getTempValue();
     lastTempUpdate = millis();
     requestTemp(); //request reading for next time
     return true;
   }
   return false;
-}//void updateTemperature
+} //void updateTemperature
 
+void setupHyst()
+{
 
-void setupPID() {
-  
-  
   requestTemp();
-  while (!updateTemperature()) {} //wait until temp sensor updated
+  while (!updateTemperature())
+  {
+  } //wait until temp sensor updated
 
-  //if temperature is more than 4 degrees below or above setpoint, OUTPUT will be set to min or max respectively
-  myPID.setBangBang(4);
-  //set PID update interval to 4000ms
-  myPID.setTimeStep(4000);
+} //void setup
 
-}//void setup
+bool hystThresh()
+{ /* function hystThresh */
+  //Perform hysteresis on sensor readings
 
+  if (aihVal >= (aihThresh + aihMargin))
+  {
+    aihHystOn = true;
+  }
+  if (aihVal <= (aihThresh - aihMargin))
+  {
+    aihHystOn = false;
+  }
 
-void loopPID() {
+  // Serial.print(F("aih hist : ")); Serial.println(aihHystOn);
+  return aihHystOn;
+}
+void loopHyst()
+{
   updateTemperature();
-  //setPoint = analogRead(POT_PIN);
-  myPID.run(); //call every loop, updates automatically at certain time interval
-  //analogWrite(OUTPUT_PIN, outputVal);
-  //digitalWrite(LED_PIN, myPID.atSetPoint(1)); //light up LED when we're at setpoint +-1 degree
-  changeRelayState(intermediateRelayState);
-  //relay issue resolution
-  if(intermediateRelayState==true){
-    if(getSetPoint()>temperature){
-      changeRelayState(1);
-    }
-    else{
-      changeRelayState(0);
-    }
-  }
-  else{
-    changeRelayState(0);
-  }
+  aihVal = temperature;
+  changeRelayState(hystThresh());
 
-}//void loop
-
+} //void loop
