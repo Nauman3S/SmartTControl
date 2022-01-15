@@ -64,6 +64,12 @@ void loopHyst()
 {
   updateTemperature();
   aihVal = temperature;
-  changeRelayState(hystThresh());
+  if(aihVal<getSetPoint()){
+    changeRelayState(1)
+  }
+  else{
+    changeRelayState(0)
+  }
+  // changeRelayState(hystThresh());
 
 } //void loop
