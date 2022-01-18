@@ -6,8 +6,8 @@ unsigned long lastTempUpdate; //tracks clock time of last temp update
 
 double temperature, outputVal;
 double setPoint = 22.13;
-const int aihMargin = 1; //+-1
-const int aihThresh = setPoint;
+double aihMargin = 1.0; //+-1
+double aihThresh = setPoint;
 bool relayState;
 
 double aihVal = 0;
@@ -64,10 +64,13 @@ void loopHyst()
 {
   updateTemperature();
   aihVal = temperature;
-  if(hystThresh()<getSetPoint()){
+  aihThresh = getSetPoint();
+  if (hystThresh())
+  {
     changeRelayState(1);
   }
-  else{
+  else
+  {
     changeRelayState(0);
   }
   // changeRelayState(hystThresh());
