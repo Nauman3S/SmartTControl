@@ -95,11 +95,11 @@ You should have Arduino IDE Installed
 
 ### PCB
 
-![3D PCB](PCB/view_3d.png)
+![3D PCB](PCB/pcb1.png)
 
-![3D PCB](PCB/view_3d_2.png)
+![3D PCB](PCB/pcb2.png)
 
-![2D PCB](PCB/view_2d.png)
+
 
 ## Server Details <a name = "server"></a>
 
